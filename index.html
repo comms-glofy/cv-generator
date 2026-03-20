@@ -1,0 +1,883 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Glofy CV Generator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f3f3;
+      --panel: #ffffff;
+      --sidebar: #1f1f21;
+      --text: #1e1e1e;
+      --muted: #6f6f6f;
+      --accent: #c8ff42;
+      --accent-dark: #a8dd27;
+      --line: #e6e6e6;
+      --white: #ffffff;
+      --danger: #c62828;
+      --shadow: 0 10px 30px rgba(0,0,0,.08);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 420px 1fr;
+      min-height: 100vh;
+    }
+
+    .panel {
+      background: var(--panel);
+      border-right: 1px solid var(--line);
+      padding: 24px;
+      overflow-y: auto;
+    }
+
+    .preview-wrap {
+      padding: 24px;
+      overflow: auto;
+    }
+
+    .panel h1 {
+      font-size: 24px;
+      margin: 0 0 8px;
+      font-weight: 800;
+    }
+
+    .panel p.lead {
+      margin: 0 0 24px;
+      color: var(--muted);
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .module {
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 16px;
+      background: #fff;
+    }
+
+    .module h2 {
+      font-size: 14px;
+      margin: 0 0 14px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .04em;
+    }
+
+    .field {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .field label {
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .field input,
+    .field textarea,
+    .field select {
+      width: 100%;
+      border: 1px solid #d8d8d8;
+      border-radius: 10px;
+      padding: 11px 12px;
+      font: inherit;
+      font-size: 13px;
+      background: white;
+    }
+
+    .field textarea {
+      resize: vertical;
+      min-height: 96px;
+      line-height: 1.45;
+    }
+
+    .grid-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .help {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .repeater-item {
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      background: #fcfcfc;
+    }
+
+    .repeater-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .repeater-title {
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .inline-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #111;
+    }
+
+    .btn-secondary {
+      background: #f0f0f0;
+      color: #111;
+    }
+
+    .btn-danger {
+      background: #ffe9e9;
+      color: var(--danger);
+    }
+
+    .actions-sticky {
+      position: sticky;
+      bottom: 0;
+      background: linear-gradient(to top, #fff 75%, rgba(255,255,255,0));
+      padding-top: 18px;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .a4 {
+      width: 794px;
+      min-height: 1123px;
+      margin: 0 auto;
+      background: white;
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-columns: 31% 69%;
+      overflow: hidden;
+    }
+
+    .cv-sidebar {
+      background: var(--sidebar);
+      color: var(--white);
+      padding: 34px 26px;
+      display: flex;
+      flex-direction: column;
+      min-height: 1123px;
+      justify-content: flex-start;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    .photo-wrap {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 26px;
+    }
+
+    .photo {
+      width: 172px;
+      height: 172px;
+      border-radius: 50%;
+      object-fit: cover;
+      border: 4px solid var(--accent);
+      background: #2f2f32;
+    }
+
+    .sidebar-section {
+      margin-bottom: 24px;
+      break-inside: avoid;
+    }
+
+    .section-chip {
+      display: inline-block;
+      background: var(--accent);
+      color: #111;
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      font-weight: 800;
+      margin-bottom: 10px;
+    }
+
+    .sidebar-text {
+      font-size: 12px;
+      line-height: 1.7;
+      color: rgba(255,255,255,.94);
+    }
+
+    .skill-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .skill-tag {
+      display: inline-flex;
+      align-items: center;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.1);
+      border: 1px solid rgba(255,255,255,.12);
+      color: #fff;
+      font-size: 11px;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+.sidebar-logo {
+  margin-top: 28px;
+  padding-top: 0;
+  break-inside: avoid;
+  page-break-inside: avoid;
+}
+
+.sidebar-logo img {
+  display: block;
+  width: 140px;
+  max-width: 100%;
+  height: auto;
+}
+
+    .sidebar-logo span {
+      color: var(--accent);
+    }
+
+    .cv-main {
+      padding: 42px 40px 40px;
+    }
+
+    .cv-name {
+      font-size: 34px;
+      line-height: 1.05;
+      margin: 0 0 12px;
+      font-weight: 800;
+      color: #111;
+      letter-spacing: -.03em;
+    }
+
+    .cv-role {
+      display: inline-block;
+      background: var(--accent);
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
+
+    .meta {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 24px;
+    }
+
+    .meta-item {
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 8px 11px;
+      font-size: 11px;
+      font-weight: 600;
+      color: #4b4b4b;
+      background: #fbfbfb;
+    }
+
+    .main-section {
+      margin-bottom: 26px;
+    }
+
+    .main-section-title {
+      font-size: 13px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: .05em;
+      margin: 0 0 14px;
+      color: #111;
+    }
+
+    .experience-item,
+    .education-item {
+      margin-bottom: 18px;
+      break-inside: avoid;
+    }
+
+    .job-title,
+    .degree-title {
+      font-size: 15px;
+      font-weight: 800;
+      margin-bottom: 3px;
+      color: #111;
+    }
+
+    .job-company,
+    .degree-inst {
+      font-size: 13px;
+      font-weight: 600;
+      margin-bottom: 2px;
+      color: #2c2c2c;
+    }
+
+    .job-dates,
+    .degree-dates {
+      font-size: 12px;
+      font-style: italic;
+      margin-bottom: 8px;
+      color: #5e5e5e;
+    }
+
+    .bullet-list {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .bullet-list li {
+      margin-bottom: 6px;
+      font-size: 12.5px;
+      line-height: 1.55;
+      color: #222;
+    }
+
+@media print {
+  body {
+    background: white;
+  }
+
+  .panel {
+    display: none !important;
+  }
+
+  .app {
+    display: block;
+  }
+
+  .preview-wrap {
+    padding: 0;
+  }
+
+  .a4 {
+    width: 210mm;
+    min-height: 297mm;
+    display: grid;
+    grid-template-columns: 31% 69%;
+    box-shadow: none;
+    margin: 0;
+  }
+
+  .cv-sidebar {
+    background: #1f1f21 !important;
+    color: white !important;
+  }
+
+  .cv-main {
+    padding: 40px;
+  }
+
+  img {
+    max-width: 100%;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .experience-item,
+  .education-item,
+  .sidebar-section {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+}
+
+    @media (max-width: 1200px) {
+      .app { grid-template-columns: 1fr; }
+      .panel { border-right: 0; border-bottom: 1px solid var(--line); }
+      .a4 { transform-origin: top center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <aside class="panel">
+      <h1>Glofy CV Generator</h1>
+  
+      <section class="module">
+        <h2>Datos generales</h2>
+        <div class="field">
+          <label for="fullName">Full Name</label>
+          <input id="fullName" type="text" placeholder="Federico N." />
+        </div>
+        <div class="field">
+          <label for="role">Position / Role</label>
+          <input id="role" type="text" placeholder="Graphic Designer" />
+        </div>
+        <div class="grid-2">
+          <div class="field">
+            <label for="country">Country</label>
+            <input id="country" type="text" placeholder="Argentina" />
+          </div>
+          <div class="field">
+            <label for="availability">Availability</label>
+            <input id="availability" type="text" placeholder="1–2 weeks" />
+          </div>
+        </div>
+        <div class="field">
+          <label for="languages">Languages</label>
+          <input id="languages" type="text" placeholder="Spanish (Native), English (Intermediate)" />
+        </div>
+        <div class="field">
+          <label for="email">Contact Email</label>
+          <input id="email" type="email" placeholder="name@glofy.co" />
+        </div>
+        <div class="field">
+          <label for="photo">Talent Photo</label>
+          <input id="photo" type="file" accept="image/*" />
+        </div>
+      </section>
+
+      <section class="module">
+        <h2>Sobre mí</h2>
+        <div class="field">
+          <label for="about">About / Sobre mí</label>
+          <textarea id="about" placeholder="Resumen profesional breve, concreto y orientado a experiencia, fortalezas y tipo de aporte al proyecto."></textarea>
+          <div class="help">Ideal: entre 70 y 120 palabras.</div>
+        </div>
+      </section>
+
+      <section class="module">
+        <h2>Skills técnicas</h2>
+        <div class="field">
+          <label for="skills">Technical Skills</label>
+          <textarea id="skills" placeholder="Una skill por línea. Ejemplo: Graphic Design&#10;Motion Graphics&#10;Adobe Creative Cloud"></textarea>
+          <div class="help">Usar entre 5 y 7 skills, una por línea.</div>
+        </div>
+      </section>
+
+      <section class="module">
+        <div class="repeater-head">
+          <h2 style="margin:0;">Experiencia profesional</h2>
+          <button class="btn-primary" type="button" id="addExperience">+ Add Experience</button>
+        </div>
+        <div id="experienceList"></div>
+      </section>
+
+      <section class="module">
+        <div class="repeater-head">
+          <h2 style="margin:0;">Educación</h2>
+          <button class="btn-primary" type="button" id="addEducation">+ Add Education</button>
+        </div>
+        <div id="educationList"></div>
+      </section>
+
+      <div class="actions-sticky">
+        <button class="btn-primary" type="button" onclick="window.print()">Download PDF</button>
+        <button class="btn-secondary" type="button" id="loadDemo">Load demo</button>
+        <button class="btn-secondary" type="button" id="resetForm">Reset</button>
+      </div>
+    </aside>
+
+    <main class="preview-wrap">
+      <section class="a4" id="cvPreview">
+        <aside class="cv-sidebar">
+          <div class="photo-wrap">
+            <img class="photo" id="previewPhoto" alt="Talent photo" src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Crect width='100%25' height='100%25' fill='%232a2a2d'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-size='28'%3EPhoto%3C/text%3E%3C/svg%3E" />
+          </div>
+
+          <div class="sidebar-section">
+            <div class="section-chip">Sobre mí</div>
+            <div class="sidebar-text" id="previewAbout">Acá va el resumen profesional del talento.</div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="section-chip">Skills Técnicas</div>
+            <div class="skill-list" id="previewSkills"></div>
+          </div>
+
+          <div class="sidebar-logo">
+  <img id="glofyLogo" src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
+</div>
+        </aside>
+
+        <section class="cv-main">
+          <h1 class="cv-name" id="previewName">Full Name</h1>
+          <div class="cv-role" id="previewRole">Position / Role</div>
+
+          <div class="meta">
+            <div class="meta-item" id="previewCountry">Country</div>
+            <div class="meta-item" id="previewAvailability">Availability</div>
+            <div class="meta-item" id="previewLanguages">Languages</div>
+            <div class="meta-item" id="previewEmail">Contact Email</div>
+          </div>
+
+          <section class="main-section">
+            <h2 class="main-section-title">Experiencia Profesional</h2>
+            <div id="previewExperience"></div>
+          </section>
+
+          <section class="main-section">
+            <h2 class="main-section-title">Educación</h2>
+            <div id="previewEducation"></div>
+          </section>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const state = {
+      experiences: [],
+      education: []
+    };
+
+    const els = {
+      fullName: document.getElementById('fullName'),
+      role: document.getElementById('role'),
+      country: document.getElementById('country'),
+      availability: document.getElementById('availability'),
+      languages: document.getElementById('languages'),
+      email: document.getElementById('email'),
+      photo: document.getElementById('photo'),
+      about: document.getElementById('about'),
+      skills: document.getElementById('skills'),
+      previewName: document.getElementById('previewName'),
+      previewRole: document.getElementById('previewRole'),
+      previewCountry: document.getElementById('previewCountry'),
+      previewAvailability: document.getElementById('previewAvailability'),
+      previewLanguages: document.getElementById('previewLanguages'),
+      previewEmail: document.getElementById('previewEmail'),
+      previewAbout: document.getElementById('previewAbout'),
+      previewSkills: document.getElementById('previewSkills'),
+      previewPhoto: document.getElementById('previewPhoto'),
+      experienceList: document.getElementById('experienceList'),
+      educationList: document.getElementById('educationList'),
+      previewExperience: document.getElementById('previewExperience'),
+      previewEducation: document.getElementById('previewEducation')
+    };
+
+    function uid() {
+      return Math.random().toString(36).slice(2, 9);
+    }
+
+    function formatDateRange(start, end, current) {
+      if (!start && !end && !current) return '';
+      const left = start || '';
+      const right = current ? 'Present' : (end || '');
+      return [left, right].filter(Boolean).join(' – ');
+    }
+
+    function escapeHtml(str = '') {
+      return str
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function addExperience(data = {}) {
+      state.experiences.push({
+        id: uid(),
+        jobTitle: data.jobTitle || '',
+        company: data.company || '',
+        startDate: data.startDate || '',
+        endDate: data.endDate || '',
+        currentRole: Boolean(data.currentRole),
+        bullets: data.bullets || ['', '', '']
+      });
+      renderExperienceInputs();
+      renderPreview();
+    }
+
+    function addEducation(data = {}) {
+      state.education.push({
+        id: uid(),
+        degree: data.degree || '',
+        institution: data.institution || '',
+        startYear: data.startYear || '',
+        endYear: data.endYear || '',
+        note: data.note || ''
+      });
+      renderEducationInputs();
+      renderPreview();
+    }
+
+    function renderExperienceInputs() {
+      els.experienceList.innerHTML = state.experiences.map((item, index) => `
+        <div class="repeater-item">
+          <div class="repeater-head">
+            <div class="repeater-title">Experience ${index + 1}</div>
+            <div class="inline-actions">
+              <button class="btn-secondary" type="button" onclick="moveExperience(${index}, -1)">↑</button>
+              <button class="btn-secondary" type="button" onclick="moveExperience(${index}, 1)">↓</button>
+              <button class="btn-danger" type="button" onclick="removeExperience(${index})">Delete</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Job Title</label>
+            <input type="text" value="${escapeHtml(item.jobTitle)}" oninput="updateExperience(${index}, 'jobTitle', this.value)">
+          </div>
+          <div class="field">
+            <label>Company</label>
+            <input type="text" value="${escapeHtml(item.company)}" oninput="updateExperience(${index}, 'company', this.value)">
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Start Date</label>
+              <input type="text" placeholder="Jun 2024" value="${escapeHtml(item.startDate)}" oninput="updateExperience(${index}, 'startDate', this.value)">
+            </div>
+            <div class="field">
+              <label>End Date</label>
+              <input type="text" placeholder="Present o Jul 2024" value="${escapeHtml(item.endDate)}" oninput="updateExperience(${index}, 'endDate', this.value)">
+            </div>
+          </div>
+          <div class="field">
+            <label><input type="checkbox" ${item.currentRole ? 'checked' : ''} onchange="updateExperience(${index}, 'currentRole', this.checked)"> Current Role</label>
+          </div>
+          ${item.bullets.map((bullet, bulletIndex) => `
+            <div class="field">
+              <label>Bullet ${bulletIndex + 1}</label>
+              <textarea oninput="updateExperienceBullet(${index}, ${bulletIndex}, this.value)" placeholder="Describe una responsabilidad o logro concreto">${escapeHtml(bullet)}</textarea>
+            </div>
+          `).join('')}
+          <button class="btn-secondary" type="button" onclick="addExperienceBullet(${index})">+ Add bullet</button>
+        </div>
+      `).join('');
+    }
+
+    function renderEducationInputs() {
+      els.educationList.innerHTML = state.education.map((item, index) => `
+        <div class="repeater-item">
+          <div class="repeater-head">
+            <div class="repeater-title">Education ${index + 1}</div>
+            <div class="inline-actions">
+              <button class="btn-secondary" type="button" onclick="moveEducation(${index}, -1)">↑</button>
+              <button class="btn-secondary" type="button" onclick="moveEducation(${index}, 1)">↓</button>
+              <button class="btn-danger" type="button" onclick="removeEducation(${index})">Delete</button>
+            </div>
+          </div>
+          <div class="field">
+            <label>Degree / Program</label>
+            <input type="text" value="${escapeHtml(item.degree)}" oninput="updateEducation(${index}, 'degree', this.value)">
+          </div>
+          <div class="field">
+            <label>Institution</label>
+            <input type="text" value="${escapeHtml(item.institution)}" oninput="updateEducation(${index}, 'institution', this.value)">
+          </div>
+          <div class="grid-2">
+            <div class="field">
+              <label>Start Year</label>
+              <input type="text" value="${escapeHtml(item.startYear)}" oninput="updateEducation(${index}, 'startYear', this.value)">
+            </div>
+            <div class="field">
+              <label>End Year</label>
+              <input type="text" value="${escapeHtml(item.endYear)}" oninput="updateEducation(${index}, 'endYear', this.value)">
+            </div>
+          </div>
+          <div class="field">
+            <label>Additional Note</label>
+            <textarea oninput="updateEducation(${index}, 'note', this.value)" placeholder="Opcional">${escapeHtml(item.note)}</textarea>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderPreview() {
+      els.previewName.textContent = els.fullName.value || 'Full Name';
+      els.previewRole.textContent = els.role.value || 'Position / Role';
+      els.previewCountry.textContent = els.country.value || 'Country';
+      els.previewAvailability.textContent = els.availability.value || 'Availability';
+      els.previewLanguages.textContent = els.languages.value || 'Languages';
+      els.previewEmail.textContent = els.email.value || 'Contact Email';
+      els.previewAbout.textContent = els.about.value || 'Acá va el resumen profesional del talento.';
+
+      const skills = els.skills.value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      els.previewSkills.innerHTML = skills.length
+        ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
+        : '<span class="skill-tag">Technical Skill</span>';
+
+      els.previewExperience.innerHTML = state.experiences.length
+        ? state.experiences.map(item => `
+            <article class="experience-item">
+              <div class="job-title">${escapeHtml(item.jobTitle || 'Job Title')}</div>
+              <div class="job-company">${escapeHtml(item.company || 'Company')}</div>
+              <div class="job-dates">${escapeHtml(formatDateRange(item.startDate, item.endDate, item.currentRole) || 'Date Range')}</div>
+              <ul class="bullet-list">
+                ${item.bullets.filter(Boolean).map(b => `<li>${escapeHtml(b)}</li>`).join('') || '<li>Describe responsabilidades y logros del rol.</li>'}
+              </ul>
+            </article>
+          `).join('')
+        : '<article class="experience-item"><div class="job-title">Job Title</div><div class="job-company">Company</div><div class="job-dates">Date Range</div><ul class="bullet-list"><li>Describe responsabilidades y logros del rol.</li></ul></article>';
+
+      els.previewEducation.innerHTML = state.education.length
+        ? state.education.map(item => `
+            <article class="education-item">
+              <div class="degree-title">${escapeHtml(item.degree || 'Degree / Program')}</div>
+              <div class="degree-inst">${escapeHtml(item.institution || 'Institution')}</div>
+              <div class="degree-dates">${escapeHtml([item.startYear, item.endYear].filter(Boolean).join(' – ') || 'Year Range')}</div>
+              ${item.note ? `<ul class="bullet-list"><li>${escapeHtml(item.note)}</li></ul>` : ''}
+            </article>
+          `).join('')
+        : '<article class="education-item"><div class="degree-title">Degree / Program</div><div class="degree-inst">Institution</div><div class="degree-dates">Year Range</div></article>';
+    }
+
+    function updateExperience(index, field, value) {
+      state.experiences[index][field] = value;
+      renderPreview();
+    }
+
+    function updateExperienceBullet(index, bulletIndex, value) {
+      state.experiences[index].bullets[bulletIndex] = value;
+      renderPreview();
+    }
+
+    function addExperienceBullet(index) {
+      state.experiences[index].bullets.push('');
+      renderExperienceInputs();
+      renderPreview();
+    }
+
+    function removeExperience(index) {
+      state.experiences.splice(index, 1);
+      renderExperienceInputs();
+      renderPreview();
+    }
+
+    function moveExperience(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= state.experiences.length) return;
+      [state.experiences[index], state.experiences[target]] = [state.experiences[target], state.experiences[index]];
+      renderExperienceInputs();
+      renderPreview();
+    }
+
+    function updateEducation(index, field, value) {
+      state.education[index][field] = value;
+      renderPreview();
+    }
+
+    function removeEducation(index) {
+      state.education.splice(index, 1);
+      renderEducationInputs();
+      renderPreview();
+    }
+
+    function moveEducation(index, direction) {
+      const target = index + direction;
+      if (target < 0 || target >= state.education.length) return;
+      [state.education[index], state.education[target]] = [state.education[target], state.education[index]];
+      renderEducationInputs();
+      renderPreview();
+    }
+
+    els.photo.addEventListener('change', (e) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        els.previewPhoto.src = reader.result;
+      };
+      reader.readAsDataURL(file);
+    });
+
+    [els.fullName, els.role, els.country, els.availability, els.languages, els.email, els.about, els.skills].forEach(input => {
+      input.addEventListener('input', renderPreview);
+    });
+
+    document.getElementById('addExperience').addEventListener('click', () => addExperience());
+    document.getElementById('addEducation').addEventListener('click', () => addEducation());
+
+    document.getElementById('loadDemo').addEventListener('click', () => {
+      els.fullName.value = 'Federico N.';
+      els.role.value = 'Graphic Designer';
+      els.country.value = 'Argentina';
+      els.availability.value = '1–2 weeks';
+      els.languages.value = 'Spanish (Native), English (Intermediate)';
+      els.email.value = 'name@glofy.co';
+      els.about.value = 'Diseñador gráfico y multimedia con más de 7 años de experiencia creando campañas, piezas visuales y contenido digital para marcas. Especializado en diseño creativo, dirección de arte, animación y desarrollo de key visuals.';
+      els.skills.value = 'Figma\nGraphic Design\nMotion Graphics\nAdobe Creative Cloud\nChatGPT\nMidjourney';
+      state.experiences = [];
+      state.education = [];
+      addExperience({ jobTitle: 'Diseñador Gráfico Sr.', company: 'Oh Gift Card', startDate: 'Jun 2024', currentRole: true, bullets: ['Desarrollo de contenido visual para campañas y redes.', 'Liderazgo visual de campañas con foco en performance.', 'Implementación de nuevo rebranding junto a UX.'] });
+      addExperience({ jobTitle: 'Visual Designer', company: 'Phinx', startDate: '2021', endDate: '2024', bullets: ['Diseño de piezas digitales y conceptos visuales.', 'Desarrollo de campañas visuales para lanzamientos.', 'Gestión autónoma de múltiples pedidos con marketing.'] });
+      addEducation({ degree: 'Diseñador Multimedia', institution: 'Escuela de Arte Multimedial Da Vinci', startYear: '2010', endYear: '2014' });
+      addEducation({ degree: 'Curso de Diseño UX/UI', institution: 'CoderHouse', startYear: '2024', endYear: '2024' });
+      renderExperienceInputs();
+      renderEducationInputs();
+      renderPreview();
+    });
+
+    document.getElementById('resetForm').addEventListener('click', () => {
+      els.fullName.value = '';
+      els.role.value = '';
+      els.country.value = '';
+      els.availability.value = '';
+      els.languages.value = '';
+      els.email.value = '';
+      els.about.value = '';
+      els.skills.value = '';
+      els.photo.value = '';
+      state.experiences = [];
+      state.education = [];
+      els.previewPhoto.src = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='320'%3E%3Crect width='100%25' height='100%25' fill='%232a2a2d'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%23ffffff' font-family='Arial' font-size='28'%3EPhoto%3C/text%3E%3C/svg%3E";
+      renderExperienceInputs();
+      renderEducationInputs();
+      renderPreview();
+    });
+
+    addExperience();
+    addEducation();
+    renderExperienceInputs();
+    renderEducationInputs();
+    renderPreview();
+
+    window.updateExperience = updateExperience;
+    window.updateExperienceBullet = updateExperienceBullet;
+    window.addExperienceBullet = addExperienceBullet;
+    window.removeExperience = removeExperience;
+    window.moveExperience = moveExperience;
+    window.updateEducation = updateEducation;
+    window.removeEducation = removeEducation;
+    window.moveEducation = moveEducation;
+  </script>
+</body>
+</html>
