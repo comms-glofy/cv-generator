@@ -3,10 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Glofy CV Generator</title>
+  <title>Glofy CV/Resume Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png">
   <style>
     :root {
       --bg: #f3f3f3;
@@ -29,6 +30,16 @@
       background: var(--bg);
       color: var(--text);
     }
+
+   .panel-brand {
+  margin: 0 0 14px;
+    }
+
+.panel-brand img {
+  display: block;
+  width: 180px;
+  height: auto;
+}
 
     .app {
       display: grid;
@@ -433,9 +444,12 @@
   </style>
 </head>
 <body>
-  <div class="app">
-    <aside class="panel">
-      <h1>Glofy CV Generator</h1>
+ <div class="app">
+  <aside class="panel">
+    <div class="panel-brand">
+      <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/2cf8ce7235724932f7f0c1d7d78b7352803285e9/Rebranding%20Logo_Isologo%20Negro.svg" alt="Glofy logo" />
+    </div>
+    <h1>CV/Resume Generator</h1>
   
       <section class="module">
         <h2>Datos generales</h2>
@@ -881,3 +895,4 @@
   </script>
 </body>
 </html>
+
