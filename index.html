@@ -205,27 +205,32 @@
       flex-wrap: wrap;
     }
 
-    .a4 {
+    .page-a4 {
       width: 794px;
       min-height: 1123px;
-      margin: 0 auto;
+      margin: 0 auto 24px;
       background: white;
       box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .page-a4.cv-page {
       display: grid;
       grid-template-columns: 31% 69%;
-      overflow: hidden;
     }
 
     .cv-sidebar {
       background: var(--sidebar);
       color: var(--white);
       padding: 34px 26px;
+      min-height: 1123px;
       display: flex;
       flex-direction: column;
-      min-height: 1123px;
       justify-content: flex-start;
-      break-inside: avoid;
-      page-break-inside: avoid;
+    }
+
+    .cv-sidebar.continuation {
+      padding: 0;
     }
 
     .photo-wrap {
@@ -250,7 +255,6 @@
 
     .sidebar-section {
       margin-bottom: 24px;
-      break-inside: avoid;
     }
 
     .section-chip {
@@ -290,10 +294,8 @@
     }
 
     .sidebar-logo {
-      margin-top: 28px;
-      padding-top: 0;
-      break-inside: avoid;
-      page-break-inside: avoid;
+      margin-top: auto;
+      padding-top: 28px;
     }
 
     .sidebar-logo img {
@@ -308,6 +310,10 @@
       padding: 42px 40px 40px;
     }
 
+    .cv-main.continuation {
+      padding-top: 48px;
+    }
+
     .cv-name,
     .report-name {
       font-size: 34px;
@@ -318,20 +324,20 @@
       letter-spacing: -.03em;
     }
 
-.cv-role,
-.report-role {
-  display: inline-flex;
-  align-items: center;
-  align-self: flex-start;
-  background: var(--accent);
-  color: #111;
-  padding: 10px 14px;
-  border-radius: 999px;
-  font-size: 13px;
-  font-weight: 800;
-  margin-bottom: 18px;
-  max-width: 100%;
-}
+    .cv-role,
+    .report-role {
+      display: inline-flex;
+      align-items: center;
+      align-self: flex-start;
+      background: var(--accent);
+      color: #111;
+      padding: 10px 14px;
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 800;
+      margin-bottom: 18px;
+      max-width: 100%;
+    }
 
     .meta {
       display: flex;
@@ -377,7 +383,6 @@
     .experience-item,
     .education-item {
       margin-bottom: 18px;
-      break-inside: avoid;
     }
 
     .job-title,
@@ -412,33 +417,26 @@
       color: #222;
     }
 
+    .report-page {
+      display: block;
+    }
+
+    .report-main {
+      min-height: 1123px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .report-content {
+      flex: 1;
+      margin-top: 12px;
+    }
+
     .report-content p {
       text-align: justify;
       margin-bottom: 12px;
       line-height: 1.7;
       font-size: 13px;
-    }
-
-    .report-page {
-      width: 794px;
-      min-height: 1123px;
-      margin: 0 auto 24px;
-      background: white;
-      box-shadow: var(--shadow);
-      display: block;
-      padding: 0;
-    }
-
-    .report-sheet {
-      min-height: 1123px;
-      display: flex;
-      flex-direction: column;
-    }
-
-    .report-main {
-      display: flex;
-      flex-direction: column;
-      min-height: 1123px;
     }
 
     .report-logo {
@@ -469,18 +467,27 @@
         padding: 0;
       }
 
-      .a4 {
+      .page-a4 {
         width: 210mm;
         min-height: 297mm;
+        margin: 0;
+        box-shadow: none;
+      }
+
+      .page-a4 + .page-a4 {
+        break-before: page;
+        page-break-before: always;
+      }
+
+      .cv-page {
         display: grid;
         grid-template-columns: 31% 69%;
-        box-shadow: none;
-        margin: 0;
       }
 
       .cv-sidebar {
         background: #1f1f21 !important;
         color: white !important;
+        min-height: 297mm;
       }
 
       .cv-main,
@@ -496,32 +503,12 @@
         -webkit-print-color-adjust: exact;
         print-color-adjust: exact;
       }
-
-      .experience-item,
-      .education-item,
-      .sidebar-section {
-        break-inside: avoid;
-        page-break-inside: avoid;
-      }
-
-      .report-page {
-        width: 210mm;
-        min-height: 297mm;
-        margin: 0;
-        box-shadow: none;
-        display: block;
-      }
-
-      .cv-page {
-        break-before: page;
-        page-break-before: always;
-      }
     }
 
     @media (max-width: 1200px) {
       .app { grid-template-columns: 1fr; }
       .panel { border-right: 0; border-bottom: 1px solid var(--line); }
-      .a4, .report-page { transform-origin: top center; }
+      .page-a4 { transform-origin: top center; }
     }
   </style>
 </head>
@@ -576,7 +563,7 @@
         <h2 data-i18n="aboutLabel">Sobre mí</h2>
         <div class="field">
           <label for="about" data-i18n="aboutField">About / Sobre mí</label>
-          <textarea id="about" placeholder="Resumen profesional breve, concreto y orientado a experiencia, fortalezas y tipo de aporte al proyecto."></textarea>
+          <textarea id="about"></textarea>
           <div class="help" data-i18n="aboutHelp">Ideal: entre 70 y 120 palabras.</div>
         </div>
       </section>
@@ -585,7 +572,7 @@
         <h2 data-i18n="technicalSkills">Skills técnicas</h2>
         <div class="field">
           <label for="skills" data-i18n="technicalSkillsField">Technical Skills</label>
-          <textarea id="skills" placeholder="Una skill por línea. Ejemplo: Graphic Design&#10;Motion Graphics&#10;Adobe Creative Cloud"></textarea>
+          <textarea id="skills"></textarea>
           <div class="help" data-i18n="skillsHelp">Usar entre 5 y 7 skills, una por línea.</div>
         </div>
       </section>
@@ -595,6 +582,9 @@
           <h2 style="margin:0;" data-i18n="professionalExperience">Experiencia profesional</h2>
           <button class="btn-primary" type="button" id="addExperience">+ Add Experience</button>
         </div>
+        <div class="help" data-i18n="experienceHelp">
+          Pegá cada experiencia completa en un solo bloque. Orden sugerido: título, empresa, fechas y luego descripción.
+        </div>
         <div id="experienceList"></div>
       </section>
 
@@ -603,6 +593,9 @@
           <h2 style="margin:0;" data-i18n="education">Educación</h2>
           <button class="btn-primary" type="button" id="addEducation">+ Add Education</button>
         </div>
+        <div class="help" data-i18n="educationHelp">
+          Pegá cada formación completa en un solo bloque. Orden sugerido: carrera/programa, institución, fechas y nota opcional.
+        </div>
         <div id="educationList"></div>
       </section>
 
@@ -610,7 +603,7 @@
         <h2 data-i18n="report">Informe</h2>
         <div class="field">
           <label for="reportText" data-i18n="reportText">Texto del informe</label>
-          <textarea id="reportText" placeholder="Pegá acá el informe completo."></textarea>
+          <textarea id="reportText"></textarea>
         </div>
       </section>
 
@@ -622,66 +615,7 @@
     </aside>
 
     <main class="preview-wrap">
-      <section class="report-page" id="reportPreview">
-        <div class="report-sheet">
-          <div class="report-main">
-            <h1 class="report-name" id="previewReportName">Full Name</h1>
-            <div class="report-role" id="previewReportRole">Position / Role</div>
-            <div class="report-content" id="previewReport">Acá va el informe.</div>
-            <div class="report-logo">
-              <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="a4 cv-page" id="cvPreview">
-        <aside class="cv-sidebar">
-          <div class="photo-wrap">
-            <img
-              class="photo is-placeholder"
-              id="previewPhoto"
-              alt="Talent photo"
-              src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/Logo%20Instagram%20-%20Fondo%20plano.jpg"
-            />
-          </div>
-
-          <div class="sidebar-section">
-            <div class="section-chip" id="previewAboutChip">About</div>
-            <div class="sidebar-text" id="previewAbout">Acá va el resumen profesional del talento.</div>
-          </div>
-
-          <div class="sidebar-section">
-            <div class="section-chip" id="previewSkillsChip">Technical Skills</div>
-            <div class="skill-list" id="previewSkills"></div>
-          </div>
-
-          <div class="sidebar-logo">
-            <img id="glofyLogo" src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
-          </div>
-        </aside>
-
-        <section class="cv-main">
-          <h1 class="cv-name" id="previewName">Full Name</h1>
-          <div class="cv-role" id="previewRole">Position / Role</div>
-
-          <div class="meta">
-            <div class="meta-item" id="previewCountry">Country</div>
-          </div>
-
-          <div class="languages-meta" id="previewLanguages"></div>
-
-          <section class="main-section">
-            <h2 class="main-section-title" id="previewExpTitle">Professional Experience</h2>
-            <div id="previewExperience"></div>
-          </section>
-
-          <section class="main-section">
-            <h2 class="main-section-title" id="previewEduTitle">Education</h2>
-            <div id="previewEducation"></div>
-          </section>
-        </section>
-      </section>
+      <div id="previewPages"></div>
     </main>
   </div>
 
@@ -745,8 +679,10 @@
         skillsHelp: 'Use between 5 and 7 skills, one per line.',
         professionalExperience: 'Professional Experience',
         addExperience: '+ Add Experience',
+        experienceHelp: 'Paste each experience as a single block. Suggested order: title, company, dates, then description.',
         education: 'Education',
         addEducation: '+ Add Education',
+        educationHelp: 'Paste each education entry as a single block. Suggested order: degree/program, institution, dates, optional note.',
         report: 'Report',
         reportText: 'Report text',
         reportPlaceholder: 'Paste the full report here.',
@@ -764,19 +700,9 @@
         selectLanguage: 'Select language',
         selectLevel: 'Select level',
         delete: 'Delete',
-        jobTitle: 'Job Title',
-        company: 'Company',
-        startDate: 'Start Date',
-        endDate: 'End Date',
-        currentRole: 'Current Role',
-        roleDescription: 'Role Description',
-        roleDescriptionPlaceholder: 'Paste the full role description here, with line breaks if needed.',
-        degreeProgram: 'Degree / Program',
-        institution: 'Institution',
-        startYear: 'Start Year',
-        endYear: 'End Year',
-        additionalNote: 'Additional Note',
-        optional: 'Optional',
+        pasteBlock: 'Paste block',
+        pasteBlockPlaceholderExp: 'Example:\nSenior Graphic Designer\nOh Gift Card\nJun 2024 – Present\nDevelopment of visual content for campaigns and social media.\nVisual leadership of campaigns focused on performance.\nImplementation of a new rebranding together with the UX team.',
+        pasteBlockPlaceholderEdu: 'Example:\nMultimedia Designer\nDa Vinci School of Multimedia Art\n2010 – 2014',
         levels: {
           Intermediate: 'Intermediate',
           Advanced: 'Advanced',
@@ -800,8 +726,10 @@
         skillsHelp: 'Usar entre 5 y 7 skills, una por línea.',
         professionalExperience: 'Experiencia profesional',
         addExperience: '+ Agregar experiencia',
+        experienceHelp: 'Pegá cada experiencia completa en un solo bloque. Orden sugerido: título, empresa, fechas y luego descripción.',
         education: 'Educación',
         addEducation: '+ Agregar educación',
+        educationHelp: 'Pegá cada formación completa en un solo bloque. Orden sugerido: carrera/programa, institución, fechas y nota opcional.',
         report: 'Informe',
         reportText: 'Texto del informe',
         reportPlaceholder: 'Pegá acá el informe completo.',
@@ -819,19 +747,9 @@
         selectLanguage: 'Seleccionar idioma',
         selectLevel: 'Seleccionar nivel',
         delete: 'Eliminar',
-        jobTitle: 'Puesto',
-        company: 'Empresa',
-        startDate: 'Fecha de inicio',
-        endDate: 'Fecha de fin',
-        currentRole: 'Rol actual',
-        roleDescription: 'Descripción del rol',
-        roleDescriptionPlaceholder: 'Pegá acá toda la descripción del rol, con saltos de línea si hace falta.',
-        degreeProgram: 'Carrera / Programa',
-        institution: 'Institución',
-        startYear: 'Año de inicio',
-        endYear: 'Año de fin',
-        additionalNote: 'Nota adicional',
-        optional: 'Opcional',
+        pasteBlock: 'Bloque a pegar',
+        pasteBlockPlaceholderExp: 'Ejemplo:\nDiseñador Gráfico Sr.\nOh Gift Card\nJun 2024 – Present\nDesarrollo de contenido visual para campañas y redes.\nLiderazgo visual de campañas con foco en performance.\nImplementación de nuevo rebranding junto a UX.',
+        pasteBlockPlaceholderEdu: 'Ejemplo:\nDiseñador Multimedia\nEscuela de Arte Multimedial Da Vinci\n2010 – 2014',
         levels: {
           Intermediate: 'Intermedio',
           Advanced: 'Avanzado',
@@ -857,24 +775,9 @@
       skills: document.getElementById('skills'),
       reportText: document.getElementById('reportText'),
       languageList: document.getElementById('languageList'),
-      previewName: document.getElementById('previewName'),
-      previewRole: document.getElementById('previewRole'),
-      previewCountry: document.getElementById('previewCountry'),
-      previewLanguages: document.getElementById('previewLanguages'),
-      previewAbout: document.getElementById('previewAbout'),
-      previewSkills: document.getElementById('previewSkills'),
-      previewPhoto: document.getElementById('previewPhoto'),
-      previewExperience: document.getElementById('previewExperience'),
-      previewEducation: document.getElementById('previewEducation'),
-      previewReport: document.getElementById('previewReport'),
-      previewReportName: document.getElementById('previewReportName'),
-      previewReportRole: document.getElementById('previewReportRole'),
-      previewAboutChip: document.getElementById('previewAboutChip'),
-      previewSkillsChip: document.getElementById('previewSkillsChip'),
-      previewExpTitle: document.getElementById('previewExpTitle'),
-      previewEduTitle: document.getElementById('previewEduTitle'),
       experienceList: document.getElementById('experienceList'),
       educationList: document.getElementById('educationList'),
+      previewPages: document.getElementById('previewPages'),
       langEn: document.getElementById('langEn'),
       langEs: document.getElementById('langEs')
     };
@@ -885,13 +788,6 @@
 
     function uid() {
       return Math.random().toString(36).slice(2, 9);
-    }
-
-    function formatDateRange(start, end, current) {
-      if (!start && !end && !current) return '';
-      const left = start || '';
-      const right = current ? 'Present' : (end || '');
-      return [left, right].filter(Boolean).join(' – ');
     }
 
     function escapeHtml(str = '') {
@@ -1001,37 +897,14 @@
     function addExperience(data = {}) {
       state.experiences.push({
         id: uid(),
-        jobTitle: data.jobTitle || '',
-        company: data.company || '',
-        startDate: data.startDate || '',
-        endDate: data.endDate || '',
-        currentRole: Boolean(data.currentRole),
-        description: data.description || ''
+        rawText: data.rawText || ''
       });
       renderExperienceInputs();
       renderPreview();
     }
 
-    function addEducation(data = {}) {
-      state.education.push({
-        id: uid(),
-        degree: data.degree || '',
-        institution: data.institution || '',
-        startYear: data.startYear || '',
-        endYear: data.endYear || '',
-        note: data.note || ''
-      });
-      renderEducationInputs();
-      renderPreview();
-    }
-
-    function updateExperience(index, field, value) {
-      state.experiences[index][field] = value;
-      renderPreview();
-    }
-
-    function updateEducation(index, field, value) {
-      state.education[index][field] = value;
+    function updateExperienceRaw(index, value) {
+      state.experiences[index].rawText = value;
       renderPreview();
     }
 
@@ -1041,11 +914,35 @@
       renderPreview();
     }
 
-    function moveExperience(index, direction) {
-      const target = index + direction;
-      if (target < 0 || target >= state.experiences.length) return;
-      [state.experiences[index], state.experiences[target]] = [state.experiences[target], state.experiences[index]];
-      renderExperienceInputs();
+    function renderExperienceInputs() {
+      els.experienceList.innerHTML = state.experiences.map((item, index) => `
+        <div class="repeater-item">
+          <div class="repeater-head">
+            <div class="repeater-title">Experience ${index + 1}</div>
+            <div class="inline-actions">
+              <button class="btn-danger" type="button" onclick="removeExperience(${index})">${t('delete')}</button>
+            </div>
+          </div>
+
+          <div class="field">
+            <label>${t('pasteBlock')}</label>
+            <textarea oninput="updateExperienceRaw(${index}, this.value)" placeholder="${t('pasteBlockPlaceholderExp')}">${escapeHtml(item.rawText)}</textarea>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function addEducation(data = {}) {
+      state.education.push({
+        id: uid(),
+        rawText: data.rawText || ''
+      });
+      renderEducationInputs();
+      renderPreview();
+    }
+
+    function updateEducationRaw(index, value) {
+      state.education[index].rawText = value;
       renderPreview();
     }
 
@@ -1055,169 +952,281 @@
       renderPreview();
     }
 
-    function moveEducation(index, direction) {
-      const target = index + direction;
-      if (target < 0 || target >= state.education.length) return;
-      [state.education[index], state.education[target]] = [state.education[target], state.education[index]];
-      renderEducationInputs();
-      renderPreview();
-    }
-
-    function renderExperienceInputs() {
-      els.experienceList.innerHTML = state.experiences.map((item, index) => `
-        <div class="repeater-item">
-          <div class="repeater-head">
-            <div class="repeater-title">Experience ${index + 1}</div>
-            <div class="inline-actions">
-              <button class="btn-secondary" type="button" onclick="moveExperience(${index}, -1)">↑</button>
-              <button class="btn-secondary" type="button" onclick="moveExperience(${index}, 1)">↓</button>
-              <button class="btn-danger" type="button" onclick="removeExperience(${index})">${t('delete')}</button>
-            </div>
-          </div>
-
-          <div class="field">
-            <label>${t('jobTitle')}</label>
-            <input type="text" value="${escapeHtml(item.jobTitle)}" oninput="updateExperience(${index}, 'jobTitle', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('company')}</label>
-            <input type="text" value="${escapeHtml(item.company)}" oninput="updateExperience(${index}, 'company', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('startDate')}</label>
-            <input type="text" placeholder="Jun 2024" value="${escapeHtml(item.startDate)}" oninput="updateExperience(${index}, 'startDate', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('endDate')}</label>
-            <input type="text" placeholder="Present o Jul 2024" value="${escapeHtml(item.endDate)}" oninput="updateExperience(${index}, 'endDate', this.value)">
-          </div>
-
-          <div class="field">
-            <label><input type="checkbox" ${item.currentRole ? 'checked' : ''} onchange="updateExperience(${index}, 'currentRole', this.checked)"> ${t('currentRole')}</label>
-          </div>
-
-          <div class="field">
-            <label>${t('roleDescription')}</label>
-            <textarea oninput="updateExperience(${index}, 'description', this.value)" placeholder="${t('roleDescriptionPlaceholder')}">${escapeHtml(item.description)}</textarea>
-          </div>
-        </div>
-      `).join('');
-    }
-
     function renderEducationInputs() {
       els.educationList.innerHTML = state.education.map((item, index) => `
         <div class="repeater-item">
           <div class="repeater-head">
             <div class="repeater-title">Education ${index + 1}</div>
             <div class="inline-actions">
-              <button class="btn-secondary" type="button" onclick="moveEducation(${index}, -1)">↑</button>
-              <button class="btn-secondary" type="button" onclick="moveEducation(${index}, 1)">↓</button>
               <button class="btn-danger" type="button" onclick="removeEducation(${index})">${t('delete')}</button>
             </div>
           </div>
 
           <div class="field">
-            <label>${t('degreeProgram')}</label>
-            <input type="text" value="${escapeHtml(item.degree)}" oninput="updateEducation(${index}, 'degree', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('institution')}</label>
-            <input type="text" value="${escapeHtml(item.institution)}" oninput="updateEducation(${index}, 'institution', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('startYear')}</label>
-            <input type="text" value="${escapeHtml(item.startYear)}" oninput="updateEducation(${index}, 'startYear', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('endYear')}</label>
-            <input type="text" value="${escapeHtml(item.endYear)}" oninput="updateEducation(${index}, 'endYear', this.value)">
-          </div>
-
-          <div class="field">
-            <label>${t('additionalNote')}</label>
-            <textarea oninput="updateEducation(${index}, 'note', this.value)" placeholder="${t('optional')}">${escapeHtml(item.note)}</textarea>
+            <label>${t('pasteBlock')}</label>
+            <textarea oninput="updateEducationRaw(${index}, this.value)" placeholder="${t('pasteBlockPlaceholderEdu')}">${escapeHtml(item.rawText)}</textarea>
           </div>
         </div>
       `).join('');
     }
 
+    function parseExperienceBlock(rawText) {
+      const lines = rawText
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      if (!lines.length) {
+        return {
+          title: 'Job Title',
+          company: 'Company',
+          dates: 'Date Range',
+          paragraphs: [currentLanguage === 'es' ? 'Describe responsabilidades y logros del rol.' : 'Describe role responsibilities and achievements.']
+        };
+      }
+
+      return {
+        title: lines[0] || 'Job Title',
+        company: lines[1] || 'Company',
+        dates: lines[2] || 'Date Range',
+        paragraphs: lines.slice(3).length ? lines.slice(3) : [currentLanguage === 'es' ? 'Describe responsabilidades y logros del rol.' : 'Describe role responsibilities and achievements.']
+      };
+    }
+
+    function parseEducationBlock(rawText) {
+      const lines = rawText
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      if (!lines.length) {
+        return {
+          degree: 'Degree / Program',
+          institution: 'Institution',
+          dates: 'Year Range',
+          note: ''
+        };
+      }
+
+      return {
+        degree: lines[0] || 'Degree / Program',
+        institution: lines[1] || 'Institution',
+        dates: lines[2] || 'Year Range',
+        note: lines.slice(3).join(' ')
+      };
+    }
+
+    function parsedExperiences() {
+      return state.experiences.map(item => parseExperienceBlock(item.rawText));
+    }
+
+    function parsedEducation() {
+      return state.education.map(item => parseEducationBlock(item.rawText));
+    }
+
+    function estimateExperienceUnits(item) {
+      const paragraphsSize = item.paragraphs.reduce((acc, p) => acc + Math.max(1, Math.ceil(p.length / 80)), 0);
+      return 4 + paragraphsSize;
+    }
+
+    function estimateEducationUnits(item) {
+      const noteSize = item.note ? Math.max(1, Math.ceil(item.note.length / 90)) : 0;
+      return 3 + noteSize;
+    }
+
+    function paginateCvContent(experiences, education) {
+      const firstPageCapacity = 34;
+      const nextPageCapacity = 42;
+
+      const pages = [];
+      let page = { experiences: [], education: [] };
+      let used = 0;
+      let currentCapacity = firstPageCapacity;
+      let stage = 'exp';
+
+      if (experiences.length) {
+        used += 2;
+      }
+      if (!experiences.length && education.length) {
+        used += 2;
+        stage = 'edu';
+      }
+
+      for (const exp of experiences) {
+        const itemUnits = estimateExperienceUnits(exp);
+        if (used + itemUnits > currentCapacity && page.experiences.length) {
+          pages.push(page);
+          page = { experiences: [], education: [] };
+          used = 0;
+          currentCapacity = nextPageCapacity;
+        }
+        page.experiences.push(exp);
+        used += itemUnits;
+      }
+
+      if (education.length) {
+        const educationHeaderUnits = 2;
+        if ((used + educationHeaderUnits > currentCapacity) && (page.experiences.length || page.education.length)) {
+          pages.push(page);
+          page = { experiences: [], education: [] };
+          used = 0;
+          currentCapacity = nextPageCapacity;
+        }
+        used += educationHeaderUnits;
+
+        for (const edu of education) {
+          const itemUnits = estimateEducationUnits(edu);
+          if (used + itemUnits > currentCapacity && page.education.length) {
+            pages.push(page);
+            page = { experiences: [], education: [] };
+            used = educationHeaderUnits;
+            currentCapacity = nextPageCapacity;
+          }
+          page.education.push(edu);
+          used += itemUnits;
+        }
+      }
+
+      pages.push(page);
+      return pages;
+    }
+
+    function buildExperienceHtml(items) {
+      return items.map(item => `
+        <article class="experience-item">
+          <div class="job-title">${escapeHtml(item.title)}</div>
+          <div class="job-company">${escapeHtml(item.company)}</div>
+          <div class="job-dates">${escapeHtml(item.dates)}</div>
+          <div class="job-description">
+            ${item.paragraphs.map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+          </div>
+        </article>
+      `).join('');
+    }
+
+    function buildEducationHtml(items) {
+      return items.map(item => `
+        <article class="education-item">
+          <div class="degree-title">${escapeHtml(item.degree)}</div>
+          <div class="degree-inst">${escapeHtml(item.institution)}</div>
+          <div class="degree-dates">${escapeHtml(item.dates)}</div>
+          ${item.note ? `<div class="job-description"><p>${escapeHtml(item.note)}</p></div>` : ''}
+        </article>
+      `).join('');
+    }
+
+    function buildLanguagesHtml() {
+      const languageLabels = state.languages.filter(item => item.language && item.level);
+
+      if (!languageLabels.length) {
+        return `<div class="meta-item">${t('previewLanguagesFallback')}</div>`;
+      }
+
+      return languageLabels.map(item => {
+        const shownLanguage = currentLanguage === 'es'
+          ? (item.language === 'English' ? 'Inglés' : item.language === 'Spanish' ? 'Español' : item.language === 'Portuguese' ? 'Portugués' : item.language)
+          : item.language;
+
+        const shownLevel = translations[currentLanguage].levels[item.level] || item.level;
+        return `<div class="meta-item">${escapeHtml(shownLanguage)} (${escapeHtml(shownLevel)})</div>`;
+      }).join('');
+    }
+
     function renderPreview() {
       const reportName = els.fullName.value || 'Full Name';
       const reportRole = els.role.value || t('positionRole');
-
-      els.previewName.textContent = reportName;
-      els.previewRole.textContent = reportRole;
-      els.previewReportName.textContent = reportName;
-      els.previewReportRole.textContent = reportRole;
-
-      els.previewCountry.textContent = getCountryDisplay(els.country.value);
-      els.previewAbout.textContent = els.about.value || (currentLanguage === 'es' ? 'Acá va el resumen profesional del talento.' : 'The professional summary goes here.');
-
-      els.previewAboutChip.textContent = t('aboutChip');
-      els.previewSkillsChip.textContent = t('technicalSkillsChip');
-      els.previewExpTitle.textContent = t('expTitle');
-      els.previewEduTitle.textContent = t('eduTitle');
-
-      const languageLabels = state.languages.filter(item => item.language && item.level);
-
-      els.previewLanguages.innerHTML = languageLabels.length
-        ? languageLabels.map(item => {
-            const shownLanguage = currentLanguage === 'es'
-              ? (item.language === 'English' ? 'Inglés' : item.language === 'Spanish' ? 'Español' : item.language === 'Portuguese' ? 'Portugués' : item.language)
-              : item.language;
-            const shownLevel = translations[currentLanguage].levels[item.level] || item.level;
-            return `<div class="meta-item">${escapeHtml(shownLanguage)} (${escapeHtml(shownLevel)})</div>`;
-          }).join('')
-        : `<div class="meta-item">${t('previewLanguagesFallback')}</div>`;
-
-      els.previewReport.innerHTML = (els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.'))
-        .split('\n')
-        .filter(Boolean)
-        .map(line => `<p>${escapeHtml(line)}</p>`)
-        .join('');
+      const aboutText = els.about.value || (currentLanguage === 'es' ? 'Acá va el resumen profesional del talento.' : 'The professional summary goes here.');
+      const reportText = els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.');
+      const countryText = getCountryDisplay(els.country.value);
 
       const skills = els.skills.value
         .split('\n')
         .map(s => s.trim())
         .filter(Boolean);
 
-      els.previewSkills.innerHTML = skills.length
+      const skillsHtml = skills.length
         ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
         : `<span class="skill-tag">${t('technicalSkillsField')}</span>`;
 
-      els.previewExperience.innerHTML = state.experiences.length
-        ? state.experiences.map(item => `
-            <article class="experience-item">
-              <div class="job-title">${escapeHtml(item.jobTitle || 'Job Title')}</div>
-              <div class="job-company">${escapeHtml(item.company || 'Company')}</div>
-              <div class="job-dates">${escapeHtml(formatDateRange(item.startDate, item.endDate, item.currentRole) || 'Date Range')}</div>
-              <div class="job-description">
-                ${(item.description || (currentLanguage === 'es' ? 'Describe responsabilidades y logros del rol.' : 'Describe role responsibilities and achievements.'))
-                  .split('\n')
-                  .filter(Boolean)
-                  .map(line => `<p>${escapeHtml(line)}</p>`)
-                  .join('')}
-              </div>
-            </article>
-          `).join('')
-        : `<article class="experience-item"><div class="job-title">Job Title</div><div class="job-company">Company</div><div class="job-dates">Date Range</div><div class="job-description"><p>${currentLanguage === 'es' ? 'Describe responsabilidades y logros del rol.' : 'Describe role responsibilities and achievements.'}</p></div></article>`;
+      const experiences = parsedExperiences();
+      const education = parsedEducation();
+      const pages = paginateCvContent(experiences, education);
 
-      els.previewEducation.innerHTML = state.education.length
-        ? state.education.map(item => `
-            <article class="education-item">
-              <div class="degree-title">${escapeHtml(item.degree || 'Degree / Program')}</div>
-              <div class="degree-inst">${escapeHtml(item.institution || 'Institution')}</div>
-              <div class="degree-dates">${escapeHtml([item.startYear, item.endYear].filter(Boolean).join(' – ') || 'Year Range')}</div>
-              ${item.note ? `<div class="job-description"><p>${escapeHtml(item.note)}</p></div>` : ''}
-            </article>
-          `).join('')
-        : `<article class="education-item"><div class="degree-title">Degree / Program</div><div class="degree-inst">Institution</div><div class="degree-dates">Year Range</div></article>`;
+      const reportPageHtml = `
+        <section class="page-a4 report-page">
+          <div class="report-main">
+            <h1 class="report-name">${escapeHtml(reportName)}</h1>
+            <div class="report-role">${escapeHtml(reportRole)}</div>
+            <div class="report-content">
+              ${reportText.split('\n').filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+            </div>
+            <div class="report-logo">
+              <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
+            </div>
+          </div>
+        </section>
+      `;
+
+      const cvPagesHtml = pages.map((page, index) => {
+        const isFirst = index === 0;
+
+        return `
+          <section class="page-a4 cv-page">
+            <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
+              ${isFirst ? `
+                <div class="photo-wrap">
+                  <img class="photo ${els.previewPhoto.classList.contains('is-placeholder') ? 'is-placeholder' : ''}" src="${els.previewPhoto.src}" alt="Talent photo" />
+                </div>
+
+                <div class="sidebar-section">
+                  <div class="section-chip">${escapeHtml(t('aboutChip'))}</div>
+                  <div class="sidebar-text">${escapeHtml(aboutText)}</div>
+                </div>
+
+                <div class="sidebar-section">
+                  <div class="section-chip">${escapeHtml(t('technicalSkillsChip'))}</div>
+                  <div class="skill-list">${skillsHtml}</div>
+                </div>
+
+                <div class="sidebar-logo">
+                  <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
+                </div>
+              ` : ``}
+            </aside>
+
+            <section class="cv-main ${isFirst ? '' : 'continuation'}">
+              ${isFirst ? `
+                <h1 class="cv-name">${escapeHtml(reportName)}</h1>
+                <div class="cv-role">${escapeHtml(reportRole)}</div>
+
+                <div class="meta">
+                  <div class="meta-item">${escapeHtml(countryText)}</div>
+                </div>
+
+                <div class="languages-meta">
+                  ${buildLanguagesHtml()}
+                </div>
+              ` : ``}
+
+              ${page.experiences.length ? `
+                <section class="main-section">
+                  <h2 class="main-section-title">${escapeHtml(t('expTitle'))}</h2>
+                  ${buildExperienceHtml(page.experiences)}
+                </section>
+              ` : ``}
+
+              ${page.education.length ? `
+                <section class="main-section">
+                  <h2 class="main-section-title">${escapeHtml(t('eduTitle'))}</h2>
+                  ${buildEducationHtml(page.education)}
+                </section>
+              ` : ``}
+            </section>
+          </section>
+        `;
+      }).join('');
+
+      els.previewPages.innerHTML = reportPageHtml + cvPagesHtml;
     }
 
     els.photo.addEventListener('change', (e) => {
@@ -1225,8 +1234,12 @@
       if (!file) return;
       const reader = new FileReader();
       reader.onload = () => {
-        els.previewPhoto.src = reader.result;
-        els.previewPhoto.classList.remove('is-placeholder');
+        const img = new Image();
+        img.onload = () => {
+          renderPreview();
+        };
+        els.photo.dataset.preview = reader.result;
+        renderPreview();
       };
       reader.readAsDataURL(file);
     });
@@ -1248,8 +1261,8 @@
       state.languages = [];
 
       els.country.value = 'Argentina';
-      els.previewPhoto.src = DEFAULT_PHOTO;
-      els.previewPhoto.classList.add('is-placeholder');
+      els.photo.value = '';
+      delete els.photo.dataset.preview;
 
       if (currentLanguage === 'es') {
         els.fullName.value = 'Federico N.';
@@ -1262,33 +1275,19 @@
         addLanguage({ language: 'English', level: 'Intermediate' });
 
         addExperience({
-          jobTitle: 'Diseñador Gráfico Sr.',
-          company: 'Oh Gift Card',
-          startDate: 'Jun 2024',
-          currentRole: true,
-          description: 'Desarrollo de contenido visual para campañas y redes.\nLiderazgo visual de campañas con foco en performance.\nImplementación de nuevo rebranding junto a UX.'
+          rawText: 'Diseñador Gráfico Sr.\nOh Gift Card\nJun 2024 – Present\nDesarrollo de contenido visual para campañas y redes.\nLiderazgo visual de campañas con foco en performance.\nImplementación de nuevo rebranding junto a UX.'
         });
 
         addExperience({
-          jobTitle: 'Diseñador Visual',
-          company: 'Phinx',
-          startDate: '2021',
-          endDate: '2024',
-          description: 'Diseño de piezas digitales y conceptos visuales.\nDesarrollo de campañas visuales para lanzamientos.\nGestión autónoma de múltiples pedidos con marketing.'
+          rawText: 'Diseñador Visual\nPhinx\n2021 – 2024\nDiseño de piezas digitales y conceptos visuales.\nDesarrollo de campañas visuales para lanzamientos.\nGestión autónoma de múltiples pedidos con marketing.'
         });
 
         addEducation({
-          degree: 'Diseñador Multimedia',
-          institution: 'Escuela de Arte Multimedial Da Vinci',
-          startYear: '2010',
-          endYear: '2014'
+          rawText: 'Diseñador Multimedia\nEscuela de Arte Multimedial Da Vinci\n2010 – 2014'
         });
 
         addEducation({
-          degree: 'Curso de Diseño UX/UI',
-          institution: 'CoderHouse',
-          startYear: '2024',
-          endYear: '2024'
+          rawText: 'Curso de Diseño UX/UI\nCoderHouse\n2024 – 2024'
         });
       } else {
         els.fullName.value = 'Federico N.';
@@ -1301,33 +1300,19 @@
         addLanguage({ language: 'English', level: 'Intermediate' });
 
         addExperience({
-          jobTitle: 'Senior Graphic Designer',
-          company: 'Oh Gift Card',
-          startDate: 'Jun 2024',
-          currentRole: true,
-          description: 'Development of visual content for campaigns and social media.\nVisual leadership of campaigns focused on performance.\nImplementation of a new rebranding together with the UX team.'
+          rawText: 'Senior Graphic Designer\nOh Gift Card\nJun 2024 – Present\nDevelopment of visual content for campaigns and social media.\nVisual leadership of campaigns focused on performance.\nImplementation of a new rebranding together with the UX team.'
         });
 
         addExperience({
-          jobTitle: 'Visual Designer',
-          company: 'Phinx',
-          startDate: '2021',
-          endDate: '2024',
-          description: 'Design of digital assets and visual concepts.\nDevelopment of visual campaigns for launches.\nIndependent management of multiple requests with the marketing team.'
+          rawText: 'Visual Designer\nPhinx\n2021 – 2024\nDesign of digital assets and visual concepts.\nDevelopment of visual campaigns for launches.\nIndependent management of multiple requests with the marketing team.'
         });
 
         addEducation({
-          degree: 'Multimedia Designer',
-          institution: 'Da Vinci School of Multimedia Art',
-          startYear: '2010',
-          endYear: '2014'
+          rawText: 'Multimedia Designer\nDa Vinci School of Multimedia Art\n2010 – 2014'
         });
 
         addEducation({
-          degree: 'UX/UI Design Course',
-          institution: 'CoderHouse',
-          startYear: '2024',
-          endYear: '2024'
+          rawText: 'UX/UI Design Course\nCoderHouse\n2024 – 2024'
         });
       }
 
@@ -1345,21 +1330,128 @@
       els.skills.value = '';
       els.reportText.value = '';
       els.photo.value = '';
+      delete els.photo.dataset.preview;
 
       state.experiences = [];
       state.education = [];
       state.languages = [];
 
-      els.previewPhoto.src = DEFAULT_PHOTO;
-      els.previewPhoto.classList.add('is-placeholder');
-
       addLanguage();
+      addExperience();
+      addEducation();
 
       renderExperienceInputs();
       renderEducationInputs();
       renderLanguageInputs();
       renderPreview();
     });
+
+    const originalRenderPreview = renderPreview;
+    renderPreview = function() {
+      const filePreview = els.photo.dataset.preview;
+      const placeholderClass = filePreview ? '' : 'is-placeholder';
+      const tempSrc = filePreview || DEFAULT_PHOTO;
+      const originalDatasetPreview = els.photo.dataset.preview;
+
+      const originalSrc = tempSrc;
+      els.previewPages.dataset.photoSrc = originalSrc;
+      els.previewPages.dataset.photoClass = placeholderClass;
+
+      const reportName = els.fullName.value || 'Full Name';
+      const reportRole = els.role.value || t('positionRole');
+      const aboutText = els.about.value || (currentLanguage === 'es' ? 'Acá va el resumen profesional del talento.' : 'The professional summary goes here.');
+      const reportText = els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.');
+      const countryText = getCountryDisplay(els.country.value);
+
+      const skills = els.skills.value
+        .split('\n')
+        .map(s => s.trim())
+        .filter(Boolean);
+
+      const skillsHtml = skills.length
+        ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
+        : `<span class="skill-tag">${t('technicalSkillsField')}</span>`;
+
+      const experiences = parsedExperiences();
+      const education = parsedEducation();
+      const pages = paginateCvContent(experiences, education);
+
+      const reportPageHtml = `
+        <section class="page-a4 report-page">
+          <div class="report-main">
+            <h1 class="report-name">${escapeHtml(reportName)}</h1>
+            <div class="report-role">${escapeHtml(reportRole)}</div>
+            <div class="report-content">
+              ${reportText.split('\n').filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+            </div>
+            <div class="report-logo">
+              <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
+            </div>
+          </div>
+        </section>
+      `;
+
+      const cvPagesHtml = pages.map((page, index) => {
+        const isFirst = index === 0;
+
+        return `
+          <section class="page-a4 cv-page">
+            <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
+              ${isFirst ? `
+                <div class="photo-wrap">
+                  <img class="photo ${placeholderClass}" src="${originalSrc}" alt="Talent photo" />
+                </div>
+
+                <div class="sidebar-section">
+                  <div class="section-chip">${escapeHtml(t('aboutChip'))}</div>
+                  <div class="sidebar-text">${escapeHtml(aboutText)}</div>
+                </div>
+
+                <div class="sidebar-section">
+                  <div class="section-chip">${escapeHtml(t('technicalSkillsChip'))}</div>
+                  <div class="skill-list">${skillsHtml}</div>
+                </div>
+
+                <div class="sidebar-logo">
+                  <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
+                </div>
+              ` : ``}
+            </aside>
+
+            <section class="cv-main ${isFirst ? '' : 'continuation'}">
+              ${isFirst ? `
+                <h1 class="cv-name">${escapeHtml(reportName)}</h1>
+                <div class="cv-role">${escapeHtml(reportRole)}</div>
+
+                <div class="meta">
+                  <div class="meta-item">${escapeHtml(countryText)}</div>
+                </div>
+
+                <div class="languages-meta">
+                  ${buildLanguagesHtml()}
+                </div>
+              ` : ``}
+
+              ${page.experiences.length ? `
+                <section class="main-section">
+                  <h2 class="main-section-title">${escapeHtml(t('expTitle'))}</h2>
+                  ${buildExperienceHtml(page.experiences)}
+                </section>
+              ` : ``}
+
+              ${page.education.length ? `
+                <section class="main-section">
+                  <h2 class="main-section-title">${escapeHtml(t('eduTitle'))}</h2>
+                  ${buildEducationHtml(page.education)}
+                </section>
+              ` : ``}
+            </section>
+          </section>
+        `;
+      }).join('');
+
+      els.previewPages.innerHTML = reportPageHtml + cvPagesHtml;
+    };
 
     addExperience();
     addEducation();
@@ -1369,14 +1461,12 @@
     renderLanguageInputs();
     applyLanguage('en');
 
-    window.updateExperience = updateExperience;
-    window.removeExperience = removeExperience;
-    window.moveExperience = moveExperience;
-    window.updateEducation = updateEducation;
-    window.removeEducation = removeEducation;
-    window.moveEducation = moveEducation;
     window.updateLanguage = updateLanguage;
     window.removeLanguage = removeLanguage;
+    window.updateExperienceRaw = updateExperienceRaw;
+    window.removeExperience = removeExperience;
+    window.updateEducationRaw = updateEducationRaw;
+    window.removeEducation = removeEducation;
   </script>
 </body>
 </html>
