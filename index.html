@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CV/Resume Generator</title>
+  <title>CV Generator</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -32,15 +32,8 @@
       color: var(--text);
     }
 
-    .panel-brand {
-      margin: 0 0 14px;
-    }
-
-    .panel-brand img {
-      display: block;
-      width: 180px;
-      height: auto;
-    }
+    .panel-brand { margin: 0 0 14px; }
+    .panel-brand img { display: block; width: 180px; height: auto; }
 
     .app {
       display: grid;
@@ -88,9 +81,7 @@
       color: #111;
     }
 
-    .lang-btn.active {
-      background: var(--accent);
-    }
+    .lang-btn.active { background: var(--accent); }
 
     .module {
       border: 1px solid var(--line);
@@ -141,6 +132,7 @@
       font-size: 11px;
       color: var(--muted);
       line-height: 1.4;
+      margin-bottom: 12px;
     }
 
     .repeater-item {
@@ -180,20 +172,9 @@
       cursor: pointer;
     }
 
-    .btn-primary {
-      background: var(--accent);
-      color: #111;
-    }
-
-    .btn-secondary {
-      background: #f0f0f0;
-      color: #111;
-    }
-
-    .btn-danger {
-      background: #ffe9e9;
-      color: var(--danger);
-    }
+    .btn-primary { background: var(--accent); color: #111; }
+    .btn-secondary { background: #f0f0f0; color: #111; }
+    .btn-danger { background: #ffe9e9; color: var(--danger); }
 
     .actions-sticky {
       position: sticky;
@@ -224,13 +205,16 @@
       color: var(--white);
       padding: 34px 26px;
       min-height: 1123px;
+      height: 1123px;
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
+      overflow: hidden;
     }
 
     .cv-sidebar.continuation {
       padding: 0;
+      background: var(--sidebar);
     }
 
     .photo-wrap {
@@ -253,9 +237,7 @@
       padding: 20px;
     }
 
-    .sidebar-section {
-      margin-bottom: 24px;
-    }
+    .sidebar-section { margin-bottom: 24px; }
 
     .section-chip {
       display: inline-block;
@@ -310,9 +292,7 @@
       padding: 42px 40px 40px;
     }
 
-    .cv-main.continuation {
-      padding-top: 48px;
-    }
+    .cv-main.continuation { padding-top: 48px; }
 
     .cv-name,
     .report-name {
@@ -367,9 +347,7 @@
       margin-bottom: 24px;
     }
 
-    .main-section {
-      margin-bottom: 26px;
-    }
+    .main-section { margin-bottom: 26px; }
 
     .main-section-title {
       font-size: 13px;
@@ -381,9 +359,7 @@
     }
 
     .experience-item,
-    .education-item {
-      margin-bottom: 18px;
-    }
+    .education-item { margin-bottom: 18px; }
 
     .job-title,
     .degree-title {
@@ -417,9 +393,7 @@
       color: #222;
     }
 
-    .report-page {
-      display: block;
-    }
+    .report-page { display: block; }
 
     .report-main {
       min-height: 1123px;
@@ -451,27 +425,35 @@
     }
 
     @media print {
+      @page {
+        size: A4;
+        margin: 0;
+      }
+
+      html,
       body {
+        width: 210mm;
+        margin: 0;
+        padding: 0;
         background: white;
       }
 
-      .panel {
-        display: none !important;
-      }
+      .panel { display: none !important; }
 
-      .app {
-        display: block;
-      }
+      .app { display: block; }
 
       .preview-wrap {
         padding: 0;
+        overflow: visible;
       }
 
       .page-a4 {
-        width: 210mm;
-        min-height: 297mm;
-        margin: 0;
-        box-shadow: none;
+        width: 210mm !important;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        overflow: hidden !important;
       }
 
       .page-a4 + .page-a4 {
@@ -480,24 +462,52 @@
       }
 
       .cv-page {
-        display: grid;
-        grid-template-columns: 31% 69%;
+        display: grid !important;
+        grid-template-columns: 65mm 145mm !important;
       }
 
       .cv-sidebar {
         background: #1f1f21 !important;
         color: white !important;
-        min-height: 297mm;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
+      }
+
+      .cv-sidebar.continuation {
+        padding: 0 !important;
+        background: #1f1f21 !important;
       }
 
       .cv-main,
       .report-main {
-        padding: 40px;
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
+        padding: 40px !important;
       }
 
-      img {
-        max-width: 100%;
+      .cv-main.continuation {
+        padding-top: 48px !important;
       }
+
+      .sidebar-text {
+        font-size: 10.5px !important;
+        line-height: 1.45 !important;
+      }
+
+      .skill-tag {
+        font-size: 9.5px !important;
+        padding: 5px 7px !important;
+      }
+
+      .sidebar-section {
+        margin-bottom: 16px !important;
+      }
+
+      img { max-width: 100%; }
 
       * {
         -webkit-print-color-adjust: exact;
@@ -799,6 +809,20 @@
         .replaceAll("'", '&#039;');
     }
 
+    function updateDocumentTitle() {
+      const name = (els.fullName.value || 'Candidate')
+        .trim()
+        .replace(/[^\w\s.-]/g, '')
+        .replace(/\s+/g, '_');
+
+      const role = (els.role.value || 'CV')
+        .trim()
+        .replace(/[^\w\s.-]/g, '')
+        .replace(/\s+/g, '_');
+
+      document.title = `${name}_${role}`;
+    }
+
     function getCountryDisplay(value) {
       if (!value) return t('previewCountryFallback');
       return currentLanguage === 'es'
@@ -971,10 +995,7 @@
     }
 
     function parseExperienceBlock(rawText) {
-      const lines = rawText
-        .split('\n')
-        .map(line => line.trim())
-        .filter(Boolean);
+      const lines = rawText.split('\n').map(line => line.trim()).filter(Boolean);
 
       if (!lines.length) {
         return {
@@ -994,10 +1015,7 @@
     }
 
     function parseEducationBlock(rawText) {
-      const lines = rawText
-        .split('\n')
-        .map(line => line.trim())
-        .filter(Boolean);
+      const lines = rawText.split('\n').map(line => line.trim()).filter(Boolean);
 
       if (!lines.length) {
         return {
@@ -1040,48 +1058,45 @@
 
       const pages = [];
       let page = { experiences: [], education: [] };
-      let used = 0;
+      let used = experiences.length ? 2 : 0;
       let currentCapacity = firstPageCapacity;
-      let stage = 'exp';
-
-      if (experiences.length) {
-        used += 2;
-      }
-      if (!experiences.length && education.length) {
-        used += 2;
-        stage = 'edu';
-      }
 
       for (const exp of experiences) {
         const itemUnits = estimateExperienceUnits(exp);
+
         if (used + itemUnits > currentCapacity && page.experiences.length) {
           pages.push(page);
           page = { experiences: [], education: [] };
           used = 0;
           currentCapacity = nextPageCapacity;
         }
+
         page.experiences.push(exp);
         used += itemUnits;
       }
 
       if (education.length) {
         const educationHeaderUnits = 2;
+
         if ((used + educationHeaderUnits > currentCapacity) && (page.experiences.length || page.education.length)) {
           pages.push(page);
           page = { experiences: [], education: [] };
           used = 0;
           currentCapacity = nextPageCapacity;
         }
+
         used += educationHeaderUnits;
 
         for (const edu of education) {
           const itemUnits = estimateEducationUnits(edu);
+
           if (used + itemUnits > currentCapacity && page.education.length) {
             pages.push(page);
             page = { experiences: [], education: [] };
             used = educationHeaderUnits;
             currentCapacity = nextPageCapacity;
           }
+
           page.education.push(edu);
           used += itemUnits;
         }
@@ -1133,17 +1148,18 @@
     }
 
     function renderPreview() {
+      updateDocumentTitle();
+
+      const photoSrc = els.photo.dataset.preview || DEFAULT_PHOTO;
+      const photoClass = els.photo.dataset.preview ? '' : 'is-placeholder';
+
       const reportName = els.fullName.value || 'Full Name';
       const reportRole = els.role.value || t('positionRole');
       const aboutText = els.about.value || (currentLanguage === 'es' ? 'Acá va el resumen profesional del talento.' : 'The professional summary goes here.');
       const reportText = els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.');
       const countryText = getCountryDisplay(els.country.value);
 
-      const skills = els.skills.value
-        .split('\n')
-        .map(s => s.trim())
-        .filter(Boolean);
-
+      const skills = els.skills.value.split('\n').map(s => s.trim()).filter(Boolean);
       const skillsHtml = skills.length
         ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
         : `<span class="skill-tag">${t('technicalSkillsField')}</span>`;
@@ -1175,7 +1191,7 @@
             <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
               ${isFirst ? `
                 <div class="photo-wrap">
-                  <img class="photo ${els.previewPhoto.classList.contains('is-placeholder') ? 'is-placeholder' : ''}" src="${els.previewPhoto.src}" alt="Talent photo" />
+                  <img class="photo ${photoClass}" src="${photoSrc}" alt="Talent photo" />
                 </div>
 
                 <div class="sidebar-section">
@@ -1231,16 +1247,20 @@
 
     els.photo.addEventListener('change', (e) => {
       const file = e.target.files?.[0];
-      if (!file) return;
+
+      if (!file) {
+        delete els.photo.dataset.preview;
+        renderPreview();
+        return;
+      }
+
       const reader = new FileReader();
+
       reader.onload = () => {
-        const img = new Image();
-        img.onload = () => {
-          renderPreview();
-        };
         els.photo.dataset.preview = reader.result;
         renderPreview();
       };
+
       reader.readAsDataURL(file);
     });
 
@@ -1251,7 +1271,11 @@
     document.getElementById('addExperience').addEventListener('click', () => addExperience());
     document.getElementById('addEducation').addEventListener('click', () => addEducation());
     document.getElementById('addLanguage').addEventListener('click', () => addLanguage());
-    document.getElementById('downloadPdf').addEventListener('click', () => window.print());
+    document.getElementById('downloadPdf').addEventListener('click', () => {
+      renderPreview();
+      window.print();
+    });
+
     els.langEn.addEventListener('click', () => applyLanguage('en'));
     els.langEs.addEventListener('click', () => applyLanguage('es'));
 
@@ -1345,113 +1369,6 @@
       renderLanguageInputs();
       renderPreview();
     });
-
-    const originalRenderPreview = renderPreview;
-    renderPreview = function() {
-      const filePreview = els.photo.dataset.preview;
-      const placeholderClass = filePreview ? '' : 'is-placeholder';
-      const tempSrc = filePreview || DEFAULT_PHOTO;
-      const originalDatasetPreview = els.photo.dataset.preview;
-
-      const originalSrc = tempSrc;
-      els.previewPages.dataset.photoSrc = originalSrc;
-      els.previewPages.dataset.photoClass = placeholderClass;
-
-      const reportName = els.fullName.value || 'Full Name';
-      const reportRole = els.role.value || t('positionRole');
-      const aboutText = els.about.value || (currentLanguage === 'es' ? 'Acá va el resumen profesional del talento.' : 'The professional summary goes here.');
-      const reportText = els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.');
-      const countryText = getCountryDisplay(els.country.value);
-
-      const skills = els.skills.value
-        .split('\n')
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const skillsHtml = skills.length
-        ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
-        : `<span class="skill-tag">${t('technicalSkillsField')}</span>`;
-
-      const experiences = parsedExperiences();
-      const education = parsedEducation();
-      const pages = paginateCvContent(experiences, education);
-
-      const reportPageHtml = `
-        <section class="page-a4 report-page">
-          <div class="report-main">
-            <h1 class="report-name">${escapeHtml(reportName)}</h1>
-            <div class="report-role">${escapeHtml(reportRole)}</div>
-            <div class="report-content">
-              ${reportText.split('\n').filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join('')}
-            </div>
-            <div class="report-logo">
-              <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
-            </div>
-          </div>
-        </section>
-      `;
-
-      const cvPagesHtml = pages.map((page, index) => {
-        const isFirst = index === 0;
-
-        return `
-          <section class="page-a4 cv-page">
-            <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
-              ${isFirst ? `
-                <div class="photo-wrap">
-                  <img class="photo ${placeholderClass}" src="${originalSrc}" alt="Talent photo" />
-                </div>
-
-                <div class="sidebar-section">
-                  <div class="section-chip">${escapeHtml(t('aboutChip'))}</div>
-                  <div class="sidebar-text">${escapeHtml(aboutText)}</div>
-                </div>
-
-                <div class="sidebar-section">
-                  <div class="section-chip">${escapeHtml(t('technicalSkillsChip'))}</div>
-                  <div class="skill-list">${skillsHtml}</div>
-                </div>
-
-                <div class="sidebar-logo">
-                  <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
-                </div>
-              ` : ``}
-            </aside>
-
-            <section class="cv-main ${isFirst ? '' : 'continuation'}">
-              ${isFirst ? `
-                <h1 class="cv-name">${escapeHtml(reportName)}</h1>
-                <div class="cv-role">${escapeHtml(reportRole)}</div>
-
-                <div class="meta">
-                  <div class="meta-item">${escapeHtml(countryText)}</div>
-                </div>
-
-                <div class="languages-meta">
-                  ${buildLanguagesHtml()}
-                </div>
-              ` : ``}
-
-              ${page.experiences.length ? `
-                <section class="main-section">
-                  <h2 class="main-section-title">${escapeHtml(t('expTitle'))}</h2>
-                  ${buildExperienceHtml(page.experiences)}
-                </section>
-              ` : ``}
-
-              ${page.education.length ? `
-                <section class="main-section">
-                  <h2 class="main-section-title">${escapeHtml(t('eduTitle'))}</h2>
-                  ${buildEducationHtml(page.education)}
-                </section>
-              ` : ``}
-            </section>
-          </section>
-        `;
-      }).join('');
-
-      els.previewPages.innerHTML = reportPageHtml + cvPagesHtml;
-    };
 
     addExperience();
     addEducation();
