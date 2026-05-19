@@ -1370,20 +1370,85 @@
       renderPreview();
     });
 
-    addExperience();
-    addEducation();
-    addLanguage();
-    renderExperienceInputs();
-    renderEducationInputs();
-    renderLanguageInputs();
-    applyLanguage('en');
-
     window.updateLanguage = updateLanguage;
     window.removeLanguage = removeLanguage;
     window.updateExperienceRaw = updateExperienceRaw;
     window.removeExperience = removeExperience;
     window.updateEducationRaw = updateEducationRaw;
     window.removeEducation = removeEducation;
+
+    // ── URL params autoload ──────────────────────────────────────────────
+    (function initFromParams() {
+      const params = new URLSearchParams(window.location.search);
+
+      const lang = params.get('lang');
+      const fullName = params.get('fullName');
+      const role = params.get('role');
+      const country = params.get('country');
+      const about = params.get('about');
+      const skills = params.get('skills');
+      const reportText = params.get('reportText');
+
+      const hasData = fullName || role || country || about || skills || reportText
+        || params.has('exp0') || params.has('edu0') || params.has('lang0');
+
+      if (!hasData) {
+        // No params: comportamiento original
+        addExperience();
+        addEducation();
+        addLanguage();
+        renderExperienceInputs();
+        renderEducationInputs();
+        renderLanguageInputs();
+        applyLanguage('en');
+        return;
+      }
+
+      // Hay datos: cargar desde params
+      if (fullName)    els.fullName.value = fullName;
+      if (role)        els.role.value = role;
+      if (about)       els.about.value = about;
+      if (skills)      els.skills.value = skills;
+      if (reportText)  els.reportText.value = reportText;
+
+      // Language UI first (needed for country select population)
+      applyLanguage(lang === 'es' ? 'es' : 'en');
+
+      // Country (must set after applyLanguage populates the select)
+      if (country) els.country.value = country;
+
+      // Languages: lang0, lang1, lang2... each = "Language|Level"
+      let li = 0;
+      while (params.has(`lang${li}`)) {
+        const parts = params.get(`lang${li}`).split('|');
+        addLanguage({ language: parts[0] || '', level: parts[1] || '' });
+        li++;
+      }
+      if (li === 0) addLanguage();
+
+      // Experiences: exp0, exp1, exp2... (rawText, newlines encoded as \n in URL)
+      let ei = 0;
+      while (params.has(`exp${ei}`)) {
+        addExperience({ rawText: params.get(`exp${ei}`) });
+        ei++;
+      }
+      if (ei === 0) addExperience();
+
+      // Education: edu0, edu1... 
+      let di = 0;
+      while (params.has(`edu${di}`)) {
+        addEducation({ rawText: params.get(`edu${di}`) });
+        di++;
+      }
+      if (di === 0) addEducation();
+
+      renderExperienceInputs();
+      renderEducationInputs();
+      renderLanguageInputs();
+      renderPreview();
+    })();
+    // ────────────────────────────────────────────────────────────────────
   </script>
 </body>
 </html>
+
