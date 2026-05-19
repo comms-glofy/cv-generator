@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CV Loader — Glofy</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png">
+  <style>
+    :root {
+      --bg: #111113;
+      --surface: #1a1a1c;
+      --surface2: #222225;
+      --border: rgba(255,255,255,.08);
+      --border2: rgba(255,255,255,.15);
+      --accent: #c8ff42;
+      --accent-dim: rgba(200,255,66,.1);
+      --text: #f0f0f0;
+      --muted: #777;
+      --muted2: #555;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+    header {
+      padding: 20px 32px;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+    header img { height: 26px; }
+    header span {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--muted);
+      letter-spacing: .08em;
+      text-transform: uppercase;
+    }
+    .dv { width: 1px; height: 16px; background: var(--border2); }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 56px 24px 80px;
+    }
+
+    .hero {
+      text-align: center;
+      margin-bottom: 48px;
+      max-width: 560px;
+    }
+    .hero h1 {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 14px;
+      letter-spacing: -.02em;
+    }
+    .hero h1 span { color: var(--accent); }
+    .hero p {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    .steps {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 32px;
+    }
+
+    .step {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 22px 24px;
+      display: flex;
+      gap: 18px;
+      align-items: flex-start;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      border: 1px solid rgba(200,255,66,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent);
+    }
+
+    .step-body { flex: 1; }
+    .step-title {
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .step-desc {
+      font-size: 13px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .step-action { margin-top: 14px; }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      border: none;
+      border-radius: 10px;
+      padding: 11px 18px;
+      font-family: 'Montserrat', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: opacity .15s, transform .1s;
+      text-decoration: none;
+    }
+    .btn:active { transform: scale(.97); }
+
+    .btn-accent { background: var(--accent); color: #111; }
+    .btn-ghost {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border2);
+    }
+    .btn-ghost:hover { border-color: rgba(255,255,255,.28); }
+
+    .prompt-box {
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      padding: 16px;
+      font-size: 12.5px;
+      color: #bbb;
+      line-height: 1.65;
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-top: 14px;
+      max-height: 180px;
+      overflow: hidden;
+      position: relative;
+      cursor: pointer;
+      transition: border-color .2s;
+      user-select: none;
+    }
+    .prompt-box:hover { border-color: rgba(200,255,66,.3); }
+    .prompt-box::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 60px;
+      background: linear-gradient(to top, var(--surface2), transparent);
+      border-radius: 0 0 12px 12px;
+    }
+
+    .copy-feedback {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      color: var(--accent);
+      font-weight: 700;
+      opacity: 0;
+      transition: opacity .2s;
+      margin-left: 10px;
+    }
+    .copy-feedback.show { opacity: 1; }
+
+    .tip {
+      width: 100%;
+      max-width: 640px;
+      background: var(--accent-dim);
+      border: 1px solid rgba(200,255,66,.15);
+      border-radius: 12px;
+      padding: 14px 18px;
+      font-size: 12px;
+      color: #aaa;
+      line-height: 1.6;
+    }
+    .tip strong { color: var(--accent); font-weight: 700; }
+  </style>
+</head>
+<body>
+
+<header>
+  <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy" />
+  <div class="dv"></div>
+  <span>CV Loader</span>
+</header>
+
+<main>
+
+  <div class="hero">
+    <h1>Cargá un CV en<br><span>segundos</span></h1>
+    <p>Seguí los 3 pasos para generar el CV de un candidato automáticamente con IA, sin tipear nada a mano.</p>
+  </div>
+
+  <div class="steps">
+
+    <!-- Step 1 -->
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <div class="step-title">Copiá el prompt</div>
+        <div class="step-desc">Hacé click en el recuadro para copiar el prompt al portapapeles.</div>
+        <div class="prompt-box" id="promptBox" onclick="copyPrompt()" title="Click para copiar">Sos un extractor de CV para Glofy. Tu tarea es leer el PDF del candidato que te adjunto (y el informe de entrevista si te lo incluyo) y generar un link directo para abrir el CV Generator de Glofy con todos los campos prellenados.
+
+El link tiene este formato base:
+https://comms-glofy.github.io/cv-generator/?lang=es&fullName=...&role=...&country=...&about=...&skills=...&reportText=...&lang0=Idioma|Nivel&exp0=Título%0AEmpresa%0AFechas%0ADescripción&edu0=Carrera%0AInstitución%0AFechas
+
+Reglas:
+- lang: "es" o "en" según el idioma de salida
+- country: uno de estos valores exactos: Argentina, Bolivia, Brasil, Chile, Colombia, Costa Rica, Paraguay, Puerto Rico, República Dominicana, Uruguay
+- skills: 5 a 7 skills separadas por %0A (salto de línea URL-encoded)
+- lang0, lang1...: cada idioma como "Idioma|Nivel" (niveles válidos: Intermediate, Advanced, Native)
+- exp0, exp1...: cada experiencia como un bloque con saltos de línea (%0A), orden: Título, Empresa, Fechas, luego cada punto de descripción en líneas separadas
+- edu0, edu1...: cada educación como Carrera%0AInstitución%0AFechas
+- reportText: el texto del informe, párrafos separados por %0A%0A
+- Todos los valores deben estar URL-encoded correctamente
+- Devolvé SOLO el link, sin explicaciones ni texto adicional</div>
+        <div class="step-action">
+          <button class="btn btn-ghost" onclick="copyPrompt()">
+            📋 Copiar prompt
+          </button>
+          <span class="copy-feedback" id="copyFeedback">✓ Copiado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 2 -->
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <div class="step-title">Abrí Claude y pegá el prompt</div>
+        <div class="step-desc">Abrí una conversación nueva en Claude, pegá el prompt, adjuntá el PDF del candidato y el informe de entrevista. Mandá el mensaje y esperá el link.</div>
+        <div class="step-action">
+          <a class="btn btn-accent" href="https://claude.ai/new" target="_blank">
+            Abrir Claude →
+          </a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Step 3 -->
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <div class="step-title">Abrí el link que te da Claude</div>
+        <div class="step-desc">Claude te va a devolver un link. Hacé click y el CV Generator se abre con todos los campos cargados. Revisás, ajustás si hace falta, subís la foto y descargás el PDF.</div>
+        <div class="step-action">
+          <a class="btn btn-ghost" href="https://comms-glofy.github.io/cv-generator/" target="_blank">
+            Abrir CV Generator →
+          </a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="tip">
+    <strong>Tip:</strong> Si el candidato no tiene informe todavía, Claude igual procesa solo el CV. Podés agregar el informe después directamente en el formulario.
+  </div>
+
+</main>
+
+<script>
+  const PROMPT = document.getElementById('promptBox').textContent.trim();
+
+  function copyPrompt() {
+    navigator.clipboard.writeText(PROMPT).then(() => {
+      const fb = document.getElementById('copyFeedback');
+      fb.classList.add('show');
+      setTimeout(() => fb.classList.remove('show'), 2000);
+    }).catch(() => {
+      alert('No se pudo copiar automáticamente. Seleccioná el texto del recuadro y copialo manualmente.');
+    });
+  }
+</script>
+
+</body>
+</html>
+
