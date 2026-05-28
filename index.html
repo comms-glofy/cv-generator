@@ -254,6 +254,9 @@
       font-size: 12px;
       line-height: 1.7;
       color: rgba(255,255,255,.94);
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
     }
 
     .skill-list {
@@ -277,7 +280,8 @@
 
     .sidebar-logo {
       margin-top: auto;
-      padding-top: 28px;
+      padding-top: 18px;
+      flex: 0 0 auto;
     }
 
     .sidebar-logo img {
@@ -391,19 +395,25 @@
       font-size: 12.5px;
       line-height: 1.55;
       color: #222;
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
     }
 
     .report-page { display: block; }
 
     .report-main {
       min-height: 1123px;
+      height: 1123px;
       display: flex;
       flex-direction: column;
+      overflow: hidden;
     }
 
     .report-content {
       flex: 1;
       margin-top: 12px;
+      overflow: hidden;
     }
 
     .report-content p {
@@ -414,8 +424,15 @@
     }
 
     .report-logo {
-      margin-top: 36px;
-      padding-top: 24px;
+      margin-top: auto;
+      padding-top: 18px;
+      flex: 0 0 auto;
+    }
+
+    .cv-side-fixed {
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
     }
 
     .report-logo img {
@@ -538,6 +555,14 @@
       </div>
 
       <section class="module">
+        <h2 data-i18n="report">Informe</h2>
+        <div class="field">
+          <label for="reportText" data-i18n="reportText">Texto del informe</label>
+          <textarea id="reportText"></textarea>
+        </div>
+      </section>
+
+      <section class="module">
         <h2 data-i18n="generalData">Datos generales</h2>
 
         <div class="field">
@@ -609,14 +634,6 @@
         <div id="educationList"></div>
       </section>
 
-      <section class="module">
-        <h2 data-i18n="report">Informe</h2>
-        <div class="field">
-          <label for="reportText" data-i18n="reportText">Texto del informe</label>
-          <textarea id="reportText"></textarea>
-        </div>
-      </section>
-
       <div class="actions-sticky">
         <button class="btn-primary" type="button" id="downloadPdf">Download PDF</button>
         <button class="btn-secondary" type="button" id="loadDemo">Load demo</button>
@@ -686,7 +703,7 @@
         aboutHelp: 'Ideal: 70 to 120 words.',
         technicalSkills: 'Technical Skills',
         technicalSkillsField: 'Technical Skills',
-        skillsHelp: 'Use between 5 and 7 skills, one per line.',
+        skillsHelp: 'Use up to 8 skills, one per line. Extra skills will not be included in the CV.',
         professionalExperience: 'Professional Experience',
         addExperience: '+ Add Experience',
         experienceHelp: 'Paste each experience as a single block. Suggested order: title, company, dates, then description.',
@@ -733,7 +750,7 @@
         aboutHelp: 'Ideal: entre 70 y 120 palabras.',
         technicalSkills: 'Skills técnicas',
         technicalSkillsField: 'Skills técnicas',
-        skillsHelp: 'Usar entre 5 y 7 skills, una por línea.',
+        skillsHelp: 'Usar hasta 8 skills, una por línea. Las skills adicionales no se incluirán en el CV.',
         professionalExperience: 'Experiencia profesional',
         addExperience: '+ Agregar experiencia',
         experienceHelp: 'Pegá cada experiencia completa en un solo bloque. Orden sugerido: título, empresa, fechas y luego descripción.',
@@ -1042,6 +1059,68 @@
       return state.education.map(item => parseEducationBlock(item.rawText));
     }
 
+    function limitSkillsInput() {
+      const original = els.skills.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const limited = original.slice(0, 8);
+      if (original.length > 8) {
+        els.skills.value = limited.join('\n');
+      }
+      return limited;
+    }
+
+    function paginateReportText(text) {
+      const fallback = currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.';
+      const paragraphs = (text || fallback)
+        .split('\n')
+        .map(line => line.trim())
+        .filter(Boolean);
+
+      const pages = [];
+      let current = [];
+      let used = 0;
+      const pageCapacity = 26;
+
+      function paragraphUnits(paragraph) {
+        return Math.max(1, Math.ceil(paragraph.length / 145));
+      }
+
+      function pushPage() {
+        if (current.length) pages.push(current);
+        current = [];
+        used = 0;
+      }
+
+      for (const paragraph of paragraphs) {
+        const words = paragraph.split(/\s+/).filter(Boolean);
+        let chunk = '';
+
+        for (const word of words) {
+          const candidate = chunk ? `${chunk} ${word}` : word;
+          if (paragraphUnits(candidate) > pageCapacity) {
+            if (chunk) {
+              if (used + paragraphUnits(chunk) > pageCapacity) pushPage();
+              current.push(chunk);
+              used += paragraphUnits(chunk);
+              chunk = word;
+            } else {
+              chunk = candidate;
+            }
+          } else {
+            chunk = candidate;
+          }
+        }
+
+        if (!chunk) continue;
+        const units = paragraphUnits(chunk);
+        if (used + units > pageCapacity && current.length) pushPage();
+        current.push(chunk);
+        used += units;
+      }
+
+      pushPage();
+      return pages.length ? pages : [[fallback]];
+    }
+
     function estimateExperienceUnits(item) {
       const paragraphsSize = item.paragraphs.reduce((acc, p) => acc + Math.max(1, Math.ceil(p.length / 80)), 0);
       return 4 + paragraphsSize;
@@ -1159,7 +1238,7 @@
       const reportText = els.reportText.value || (currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.');
       const countryText = getCountryDisplay(els.country.value);
 
-      const skills = els.skills.value.split('\n').map(s => s.trim()).filter(Boolean);
+      const skills = limitSkillsInput();
       const skillsHtml = skills.length
         ? skills.map(skill => `<span class="skill-tag">${escapeHtml(skill)}</span>`).join('')
         : `<span class="skill-tag">${t('technicalSkillsField')}</span>`;
@@ -1168,19 +1247,56 @@
       const education = parsedEducation();
       const pages = paginateCvContent(experiences, education);
 
-      const reportPageHtml = `
+      const reportPages = paginateReportText(reportText);
+      const reportPageHtml = reportPages.map((reportParagraphs, index) => `
         <section class="page-a4 report-page">
           <div class="report-main">
-            <h1 class="report-name">${escapeHtml(reportName)}</h1>
-            <div class="report-role">${escapeHtml(reportRole)}</div>
+            ${index === 0 ? `
+              <h1 class="report-name">${escapeHtml(reportName)}</h1>
+              <div class="report-role">${escapeHtml(reportRole)}</div>
+            ` : ``}
             <div class="report-content">
-              ${reportText.split('\n').filter(Boolean).map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+              ${reportParagraphs.map(line => `<p>${escapeHtml(line)}</p>`).join('')}
             </div>
             <div class="report-logo">
               <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
             </div>
           </div>
         </section>
+      `).join('');
+
+      const cvSidebarFirstPageHtml = `
+        <div class="cv-side-fixed">
+          <div class="photo-wrap">
+            <img class="photo ${photoClass}" src="${photoSrc}" alt="Talent photo" />
+          </div>
+
+          <div class="sidebar-section">
+            <div class="section-chip">${escapeHtml(t('aboutChip'))}</div>
+            <div class="sidebar-text">${escapeHtml(aboutText)}</div>
+          </div>
+
+          <div class="sidebar-section">
+            <div class="section-chip">${escapeHtml(t('technicalSkillsChip'))}</div>
+            <div class="skill-list">${skillsHtml}</div>
+          </div>
+
+          <div class="sidebar-logo">
+            <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
+          </div>
+        </div>
+      `;
+
+      const cvSidebarContinuationHtml = `
+        <div class="cv-side-fixed">
+          <div class="photo-wrap">
+            <img class="photo ${photoClass}" src="${photoSrc}" alt="Talent photo" />
+          </div>
+
+          <div class="sidebar-logo">
+            <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
+          </div>
+        </div>
       `;
 
       const cvPagesHtml = pages.map((page, index) => {
@@ -1188,40 +1304,14 @@
 
         return `
           <section class="page-a4 cv-page">
-            <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
-              ${isFirst ? `
-                <div class="photo-wrap">
-                  <img class="photo ${photoClass}" src="${photoSrc}" alt="Talent photo" />
-                </div>
-
-                <div class="sidebar-section">
-                  <div class="section-chip">${escapeHtml(t('aboutChip'))}</div>
-                  <div class="sidebar-text">${escapeHtml(aboutText)}</div>
-                </div>
-
-                <div class="sidebar-section">
-                  <div class="section-chip">${escapeHtml(t('technicalSkillsChip'))}</div>
-                  <div class="skill-list">${skillsHtml}</div>
-                </div>
-
-                <div class="sidebar-logo">
-                  <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/b4327c3ea444f1a1227d674de7188e671dc19e3d/glofy-rebrand-blanco.svg" alt="Glofy logo" />
-                </div>
-              ` : ``}
+            <aside class="cv-sidebar">
+              ${isFirst ? cvSidebarFirstPageHtml : cvSidebarContinuationHtml}
             </aside>
 
             <section class="cv-main ${isFirst ? '' : 'continuation'}">
               ${isFirst ? `
                 <h1 class="cv-name">${escapeHtml(reportName)}</h1>
                 <div class="cv-role">${escapeHtml(reportRole)}</div>
-
-                <div class="meta">
-                  <div class="meta-item">${escapeHtml(countryText)}</div>
-                </div>
-
-                <div class="languages-meta">
-                  ${buildLanguagesHtml()}
-                </div>
               ` : ``}
 
               ${page.experiences.length ? `
@@ -1235,6 +1325,18 @@
                 <section class="main-section">
                   <h2 class="main-section-title">${escapeHtml(t('eduTitle'))}</h2>
                   ${buildEducationHtml(page.education)}
+                </section>
+              ` : ``}
+
+              ${index === pages.length - 1 ? `
+                <section class="main-section">
+                  <h2 class="main-section-title">${escapeHtml(currentLanguage === 'es' ? 'Datos adicionales' : 'Additional Information')}</h2>
+                  <div class="meta">
+                    <div class="meta-item">${escapeHtml(countryText)}</div>
+                  </div>
+                  <div class="languages-meta">
+                    ${buildLanguagesHtml()}
+                  </div>
                 </section>
               ` : ``}
             </section>
@@ -1264,8 +1366,13 @@
       reader.readAsDataURL(file);
     });
 
-    [els.fullName, els.role, els.country, els.about, els.skills, els.reportText].forEach(input => {
+    [els.fullName, els.role, els.country, els.about, els.reportText].forEach(input => {
       input.addEventListener('input', renderPreview);
+    });
+
+    els.skills.addEventListener('input', () => {
+      limitSkillsInput();
+      renderPreview();
     });
 
     document.getElementById('addExperience').addEventListener('click', () => addExperience());
