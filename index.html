@@ -1098,56 +1098,112 @@
       return limited;
     }
 
-    function paginateReportText(text) {
+    function paginateReportText(text, reportName = 'Full Name', reportRole = '') {
       const fallback = currentLanguage === 'es' ? 'Acá va el informe.' : 'The report goes here.';
       const paragraphs = (text || fallback)
         .split('\n')
         .map(line => line.trim())
         .filter(Boolean);
 
-      const pages = [];
-      let current = [];
-      let used = 0;
-      const pageCapacity = 34;
+      const PAGE_HEIGHT = 1123;
 
-      function paragraphUnits(paragraph) {
-        return Math.max(1, Math.ceil(paragraph.length / 200));
+      function reportPageFits(pageParagraphs, isFirstPage) {
+        const measure = document.createElement('section');
+        measure.className = 'page-a4 report-page';
+        measure.style.position = 'absolute';
+        measure.style.left = '-99999px';
+        measure.style.top = '0';
+        measure.style.visibility = 'hidden';
+        measure.style.pointerEvents = 'none';
+        measure.style.width = '794px';
+        measure.style.minHeight = '0';
+        measure.style.height = 'auto';
+        measure.style.overflow = 'visible';
+
+        measure.innerHTML = `
+          <div class="report-main" style="height:auto !important; min-height:0 !important; max-height:none !important; overflow:visible !important;">
+            ${isFirstPage ? `
+              <h1 class="report-name">${escapeHtml(reportName)}</h1>
+              <div class="report-role">${escapeHtml(reportRole)}</div>
+            ` : ``}
+            <div class="report-content" style="overflow:visible !important; flex:0 0 auto !important;">
+              ${pageParagraphs.map(line => `<p>${escapeHtml(line)}</p>`).join('')}
+            </div>
+            <div class="report-logo">
+              <img src="https://raw.githubusercontent.com/comms-glofy/glofy-assets/refs/heads/main/favicon.png" alt="Glofy logo" />
+            </div>
+          </div>
+        `;
+
+        document.body.appendChild(measure);
+        const main = measure.querySelector('.report-main');
+        const fits = main.scrollHeight <= PAGE_HEIGHT;
+        document.body.removeChild(measure);
+        return fits;
       }
 
-      function pushPage() {
-        if (current.length) pages.push(current);
-        current = [];
-        used = 0;
-      }
-
-      for (const paragraph of paragraphs) {
+      function splitLongParagraph(paragraph, isFirstPage) {
         const words = paragraph.split(/\s+/).filter(Boolean);
+        const chunks = [];
         let chunk = '';
 
         for (const word of words) {
           const candidate = chunk ? `${chunk} ${word}` : word;
-          if (paragraphUnits(candidate) > pageCapacity) {
-            if (chunk) {
-              if (used + paragraphUnits(chunk) > pageCapacity) pushPage();
-              current.push(chunk);
-              used += paragraphUnits(chunk);
-              chunk = word;
-            } else {
-              chunk = candidate;
-            }
-          } else {
+
+          if (reportPageFits([candidate], isFirstPage && chunks.length === 0)) {
             chunk = candidate;
+          } else {
+            if (chunk) {
+              chunks.push(chunk);
+              chunk = word;
+              isFirstPage = false;
+            } else {
+              chunks.push(candidate);
+              chunk = '';
+              isFirstPage = false;
+            }
           }
         }
 
-        if (!chunk) continue;
-        const units = paragraphUnits(chunk);
-        if (used + units > pageCapacity && current.length) pushPage();
-        current.push(chunk);
-        used += units;
+        if (chunk) chunks.push(chunk);
+        return chunks;
       }
 
-      pushPage();
+      const pages = [];
+      let current = [];
+      let isFirstPage = true;
+
+      for (const paragraph of paragraphs) {
+        const candidate = [...current, paragraph];
+
+        if (reportPageFits(candidate, isFirstPage)) {
+          current = candidate;
+          continue;
+        }
+
+        if (current.length) {
+          pages.push(current);
+          current = [];
+          isFirstPage = false;
+        }
+
+        if (reportPageFits([paragraph], isFirstPage)) {
+          current = [paragraph];
+        } else {
+          const chunks = splitLongParagraph(paragraph, isFirstPage);
+          for (const chunk of chunks) {
+            if (reportPageFits([...current, chunk], isFirstPage)) {
+              current.push(chunk);
+            } else {
+              if (current.length) pages.push(current);
+              current = [chunk];
+              isFirstPage = false;
+            }
+          }
+        }
+      }
+
+      if (current.length) pages.push(current);
       return pages.length ? pages : [[fallback]];
     }
 
@@ -1295,7 +1351,7 @@
       const education = parsedEducation();
       const pages = paginateCvContent(experiences, education);
 
-      const reportPages = paginateReportText(reportText);
+      const reportPages = paginateReportText(reportText, reportName, reportRole);
       const reportPageHtml = reportPages.map((reportParagraphs, index) => `
         <section class="page-a4 report-page">
           <div class="report-main">
