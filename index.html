@@ -209,12 +209,13 @@
       display: flex;
       flex-direction: column;
       justify-content: flex-start;
-      overflow: hidden;
+      overflow: visible;
     }
 
     .cv-sidebar.continuation {
-      padding: 0;
+      padding: 34px 26px;
       background: var(--sidebar);
+      justify-content: flex-end;
     }
 
     .photo-wrap {
@@ -508,11 +509,11 @@
         height: 297mm !important;
         min-height: 297mm !important;
         max-height: 297mm !important;
-        overflow: hidden !important;
+        overflow: visible !important;
       }
 
       .cv-sidebar.continuation {
-        padding: 0 !important;
+        padding: 34px 26px !important;
         background: #1f1f21 !important;
       }
 
@@ -1218,8 +1219,8 @@
     }
 
     function paginateCvContent(experiences, education) {
-      const firstPageCapacity = 34;
-      const nextPageCapacity = 42;
+      const firstPageCapacity = 44;
+      const nextPageCapacity = 52;
 
       const pages = [];
       let page = { experiences: [], education: [] };
@@ -1408,7 +1409,7 @@
 
         return `
           <section class="page-a4 cv-page">
-            <aside class="cv-sidebar">
+            <aside class="cv-sidebar ${isFirst ? '' : 'continuation'}">
               ${isFirst ? cvSidebarFirstPageHtml : cvSidebarContinuationHtml}
             </aside>
 
