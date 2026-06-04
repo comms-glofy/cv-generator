@@ -1208,67 +1208,77 @@
       return pages.length ? pages : [[fallback]];
     }
 
-    function estimateExperienceUnits(item) {
-      const paragraphsSize = item.paragraphs.reduce((acc, p) => acc + Math.max(1, Math.ceil(p.length / 80)), 0);
-      return 4 + paragraphsSize;
-    }
-
-    function estimateEducationUnits(item) {
-      const noteSize = item.note ? Math.max(1, Math.ceil(item.note.length / 90)) : 0;
-      return 3 + noteSize;
+    // Mide la altura real de un conjunto de items en el DOM
+    function measureCvPageHeight(exps, edus, isFirst) {
+      const probe = document.createElement('div');
+      probe.style.cssText = 'position:absolute;left:-99999px;top:0;visibility:hidden;pointer-events:none;width:548px;';
+      probe.innerHTML = `
+        <div style="padding:${isFirst ? '42px 40px 40px' : '48px 40px 40px'}; font-family:Montserrat,sans-serif; font-size:12.5px; line-height:1.55; box-sizing:border-box;">
+          ${isFirst ? '<div style="height:90px"></div>' : ''}
+          ${exps.length ? `
+            <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:0 0 14px;">&nbsp;</div>
+            ${exps.map(item => `
+              <div style="margin-bottom:18px;">
+                <div style="font-size:15px;font-weight:800;margin-bottom:3px;">${escapeHtml(item.title)}</div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:2px;">${escapeHtml(item.company)}</div>
+                <div style="font-size:12px;font-style:italic;margin-bottom:8px;">${escapeHtml(item.dates)}</div>
+                ${item.paragraphs.map(p => `<p style="margin:0 0 8px;font-size:12.5px;line-height:1.55;">${escapeHtml(p)}</p>`).join('')}
+              </div>
+            `).join('')}
+          ` : ''}
+          ${edus.length ? `
+            <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin:0 0 14px;">&nbsp;</div>
+            ${edus.map(item => `
+              <div style="margin-bottom:18px;">
+                <div style="font-size:15px;font-weight:800;margin-bottom:3px;">${escapeHtml(item.degree)}</div>
+                <div style="font-size:13px;font-weight:600;margin-bottom:2px;">${escapeHtml(item.institution)}</div>
+                <div style="font-size:12px;font-style:italic;margin-bottom:8px;">${escapeHtml(item.dates)}</div>
+              </div>
+            `).join('')}
+          ` : ''}
+        </div>
+      `;
+      document.body.appendChild(probe);
+      const h = probe.scrollHeight;
+      document.body.removeChild(probe);
+      return h;
     }
 
     function paginateCvContent(experiences, education) {
-      const firstPageCapacity = 44;
-      const nextPageCapacity = 52;
-
+      const PAGE_HEIGHT = 1083;
       const pages = [];
-      let page = { experiences: [], education: [] };
-      let used = experiences.length ? 2 : 0;
-      let currentCapacity = firstPageCapacity;
+      let pageExps = [];
+      let pageEdus = [];
+      let isFirst = true;
 
       for (const exp of experiences) {
-        const itemUnits = estimateExperienceUnits(exp);
-
-        if (used + itemUnits > currentCapacity && page.experiences.length) {
-          pages.push(page);
-          page = { experiences: [], education: [] };
-          used = 0;
-          currentCapacity = nextPageCapacity;
+        const candidate = [...pageExps, exp];
+        if (measureCvPageHeight(candidate, [], isFirst) > PAGE_HEIGHT && pageExps.length > 0) {
+          pages.push({ experiences: pageExps, education: [] });
+          pageExps = [exp];
+          isFirst = false;
+        } else {
+          pageExps = candidate;
         }
-
-        page.experiences.push(exp);
-        used += itemUnits;
       }
 
-      if (education.length) {
-        const educationHeaderUnits = 2;
-
-        if ((used + educationHeaderUnits > currentCapacity) && (page.experiences.length || page.education.length)) {
-          pages.push(page);
-          page = { experiences: [], education: [] };
-          used = 0;
-          currentCapacity = nextPageCapacity;
-        }
-
-        used += educationHeaderUnits;
-
-        for (const edu of education) {
-          const itemUnits = estimateEducationUnits(edu);
-
-          if (used + itemUnits > currentCapacity && page.education.length) {
-            pages.push(page);
-            page = { experiences: [], education: [] };
-            used = educationHeaderUnits;
-            currentCapacity = nextPageCapacity;
+      for (const edu of education) {
+        const candidate = [...pageEdus, edu];
+        if (measureCvPageHeight(pageExps, candidate, isFirst) > PAGE_HEIGHT) {
+          if (pageExps.length || pageEdus.length) {
+            pages.push({ experiences: pageExps, education: pageEdus });
+            pageExps = [];
+            pageEdus = [edu];
+            isFirst = false;
+          } else {
+            pageEdus = candidate;
           }
-
-          page.education.push(edu);
-          used += itemUnits;
+        } else {
+          pageEdus = candidate;
         }
       }
 
-      pages.push(page);
+      pages.push({ experiences: pageExps, education: pageEdus });
       return pages;
     }
 
