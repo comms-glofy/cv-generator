@@ -1108,10 +1108,10 @@
       const pages = [];
       let current = [];
       let used = 0;
-      const pageCapacity = 20;
+      const pageCapacity = 34;
 
       function paragraphUnits(paragraph) {
-        return Math.max(1, Math.ceil(paragraph.length / 110));
+        return Math.max(1, Math.ceil(paragraph.length / 200));
       }
 
       function pushPage() {
@@ -1270,7 +1270,7 @@
           : item.language;
 
         const shownLevel = translations[currentLanguage].levels[item.level] || item.level;
-        return `${shownLanguage} ${shownLevel}`;
+        return `${shownLanguage} (${shownLevel})`;
       }).join(', ');
     }
 
