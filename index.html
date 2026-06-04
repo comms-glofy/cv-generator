@@ -282,6 +282,10 @@
       margin-top: auto;
       padding-top: 18px;
       flex: 0 0 auto;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
     }
 
     .sidebar-logo img {
@@ -289,6 +293,7 @@
       width: 140px;
       max-width: 100%;
       height: auto;
+      margin: 0 auto;
     }
 
     .cv-main,
@@ -351,6 +356,19 @@
       margin-bottom: 24px;
     }
 
+    .cv-header-details {
+      font-size: 12px;
+      line-height: 1.5;
+      font-weight: 600;
+      color: #4b4b4b;
+      margin: -6px 0 24px;
+    }
+
+    .cv-header-details strong {
+      color: #111;
+      font-weight: 800;
+    }
+
     .main-section { margin-bottom: 26px; }
 
     .main-section-title {
@@ -408,6 +426,7 @@
       display: flex;
       flex-direction: column;
       overflow: hidden;
+      padding: 96px;
     }
 
     .report-content {
@@ -497,13 +516,20 @@
         background: #1f1f21 !important;
       }
 
-      .cv-main,
-      .report-main {
+      .cv-main {
         height: 297mm !important;
         min-height: 297mm !important;
         max-height: 297mm !important;
         overflow: hidden !important;
         padding: 40px !important;
+      }
+
+      .report-main {
+        height: 297mm !important;
+        min-height: 297mm !important;
+        max-height: 297mm !important;
+        overflow: hidden !important;
+        padding: 25.4mm !important;
       }
 
       .cv-main.continuation {
@@ -722,6 +748,8 @@
         eduTitle: 'Education',
         previewCountryFallback: 'Country',
         previewLanguagesFallback: 'Languages',
+        residenceCountryLabel: 'Country of residence',
+        languageInlineLabel: 'Language',
         languageLabel: 'Language',
         levelLabel: 'Level',
         selectLanguage: 'Select language',
@@ -769,6 +797,8 @@
         eduTitle: 'Educación',
         previewCountryFallback: 'País',
         previewLanguagesFallback: 'Idiomas',
+        residenceCountryLabel: 'País de residencia',
+        languageInlineLabel: 'Idioma',
         languageLabel: 'Idioma',
         levelLabel: 'Nivel',
         selectLanguage: 'Seleccionar idioma',
@@ -1078,10 +1108,10 @@
       const pages = [];
       let current = [];
       let used = 0;
-      const pageCapacity = 26;
+      const pageCapacity = 20;
 
       function paragraphUnits(paragraph) {
-        return Math.max(1, Math.ceil(paragraph.length / 145));
+        return Math.max(1, Math.ceil(paragraph.length / 110));
       }
 
       function pushPage() {
@@ -1226,6 +1256,24 @@
       }).join('');
     }
 
+
+    function buildInlineLanguagesText() {
+      const languageLabels = state.languages.filter(item => item.language && item.level);
+
+      if (!languageLabels.length) {
+        return t('previewLanguagesFallback');
+      }
+
+      return languageLabels.map(item => {
+        const shownLanguage = currentLanguage === 'es'
+          ? (item.language === 'English' ? 'Inglés' : item.language === 'Spanish' ? 'Español' : item.language === 'Portuguese' ? 'Portugués' : item.language)
+          : item.language;
+
+        const shownLevel = translations[currentLanguage].levels[item.level] || item.level;
+        return `${shownLanguage} ${shownLevel}`;
+      }).join(', ');
+    }
+
     function renderPreview() {
       updateDocumentTitle();
 
@@ -1312,6 +1360,9 @@
               ${isFirst ? `
                 <h1 class="cv-name">${escapeHtml(reportName)}</h1>
                 <div class="cv-role">${escapeHtml(reportRole)}</div>
+                <div class="cv-header-details">
+                  <strong>${escapeHtml(t('residenceCountryLabel'))}:</strong> ${escapeHtml(countryText)} | <strong>${escapeHtml(t('languageInlineLabel'))}:</strong> ${escapeHtml(buildInlineLanguagesText())}.
+                </div>
               ` : ``}
 
               ${page.experiences.length ? `
@@ -1328,17 +1379,7 @@
                 </section>
               ` : ``}
 
-              ${index === pages.length - 1 ? `
-                <section class="main-section">
-                  <h2 class="main-section-title">${escapeHtml(currentLanguage === 'es' ? 'Datos adicionales' : 'Additional Information')}</h2>
-                  <div class="meta">
-                    <div class="meta-item">${escapeHtml(countryText)}</div>
-                  </div>
-                  <div class="languages-meta">
-                    ${buildLanguagesHtml()}
-                  </div>
-                </section>
-              ` : ``}
+              ${''}
             </section>
           </section>
         `;
@@ -1558,4 +1599,3 @@
   </script>
 </body>
 </html>
-
