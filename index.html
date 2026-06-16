@@ -1057,7 +1057,7 @@
       return {
         title: lines[0] || 'Job Title',
         company: lines[1] || 'Company',
-        dates: lines[2] || 'Date Range',
+        dates: lines[2] || '',
         paragraphs: lines.slice(3).length ? lines.slice(3) : [currentLanguage === 'es' ? 'Describe responsabilidades y logros del rol.' : 'Describe role responsibilities and achievements.']
       };
     }
@@ -1077,7 +1077,7 @@
       return {
         degree: lines[0] || 'Degree / Program',
         institution: lines[1] || 'Institution',
-        dates: lines[2] || 'Year Range',
+        dates: lines[2] || '',
         note: lines.slice(3).join(' ')
       };
     }
@@ -1287,7 +1287,7 @@
         <article class="experience-item">
           <div class="job-title">${escapeHtml(item.title)}</div>
           <div class="job-company">${escapeHtml(item.company)}</div>
-          <div class="job-dates">${escapeHtml(item.dates)}</div>
+          ${item.dates ? `<div class="job-dates">${escapeHtml(item.dates)}</div>` : ''}
           <div class="job-description">
             ${item.paragraphs.map(line => `<p>${escapeHtml(line)}</p>`).join('')}
           </div>
@@ -1300,7 +1300,7 @@
         <article class="education-item">
           <div class="degree-title">${escapeHtml(item.degree)}</div>
           <div class="degree-inst">${escapeHtml(item.institution)}</div>
-          <div class="degree-dates">${escapeHtml(item.dates)}</div>
+          ${item.dates ? `<div class="degree-dates">${escapeHtml(item.dates)}</div>` : ''}
           ${item.note ? `<div class="job-description"><p>${escapeHtml(item.note)}</p></div>` : ''}
         </article>
       `).join('');
